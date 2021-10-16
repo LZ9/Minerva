@@ -1,11 +1,32 @@
 package com.lodz.android.minerva
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import com.lodz.android.corekt.anko.getColorCompat
+import com.lodz.android.minerva.databinding.ActivityMainBinding
+import com.lodz.android.pandora.base.activity.BaseActivity
+import com.lodz.android.pandora.utils.viewbinding.bindingLayout
+import com.lodz.android.pandora.widget.base.TitleBarLayout
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+class MainActivity : BaseActivity() {
+
+    private val mBinding: ActivityMainBinding by bindingLayout(ActivityMainBinding::inflate)
+
+    override fun getViewBindingLayout(): View = mBinding.root
+
+    override fun findViews(savedInstanceState: Bundle?) {
+        super.findViews(savedInstanceState)
+        setTitleBar(getTitleBarLayout())
+    }
+
+    private fun setTitleBar(titleBarLayout: TitleBarLayout) {
+        titleBarLayout.needBackButton(false)
+        titleBarLayout.setBackgroundColor(getColorCompat(R.color.purple_700))
+        titleBarLayout.setTitleName(R.string.app_name)
+    }
+
+    override fun initData() {
+        super.initData()
+        showStatusCompleted()
     }
 }
