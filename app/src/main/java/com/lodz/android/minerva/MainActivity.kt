@@ -21,7 +21,7 @@ class MainActivity : BaseActivity() {
 
     private fun setTitleBar(titleBarLayout: TitleBarLayout) {
         titleBarLayout.needBackButton(false)
-        titleBarLayout.setBackgroundColor(getColorCompat(R.color.purple_700))
+        titleBarLayout.setBackgroundColor(getColorCompat(R.color.color_00a1d5))
         titleBarLayout.setTitleName(R.string.app_name)
     }
 
