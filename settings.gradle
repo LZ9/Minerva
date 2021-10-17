@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Minerva"
 include ':app'
+include ':minerva'

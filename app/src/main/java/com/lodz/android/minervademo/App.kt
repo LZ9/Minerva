@@ -1,4 +1,4 @@
-package com.lodz.android.minerva
+package com.lodz.android.minervademo
 
 import com.lodz.android.pandora.base.application.BaseApplication
 
