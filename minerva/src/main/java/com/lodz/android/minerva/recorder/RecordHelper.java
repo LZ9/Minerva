@@ -11,7 +11,7 @@ import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
-import com.lodz.android.minerva.recorder.mp3.Mp3EncodeThread;
+import com.zlw.main.recorderlib.recorder.mp3.Mp3EncodeThread;
 import com.lodz.android.minerva.recorder.wav.WavUtils;
 import com.lodz.android.minerva.utils.ByteUtils;
 import com.lodz.android.minerva.utils.FileUtils;

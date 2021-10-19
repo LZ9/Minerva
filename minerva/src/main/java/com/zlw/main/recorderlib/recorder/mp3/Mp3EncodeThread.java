@@ -1,4 +1,4 @@
-package com.lodz.android.minerva.recorder.mp3;
+package com.zlw.main.recorderlib.recorder.mp3;
 
 
 import com.lodz.android.minerva.recorder.RecordConfig;
