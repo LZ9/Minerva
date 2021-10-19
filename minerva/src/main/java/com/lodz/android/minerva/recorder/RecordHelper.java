@@ -211,10 +211,10 @@ public class RecordHelper {
                     byte[] fftData = fftFactory.makeFftData(data);
                     if (fftData != null) {
                         if (recordSoundSizeListener != null) {
-                            recordSoundSizeListener.onSoundSize(getDb(data));
+                            recordSoundSizeListener.onSoundSize(getDb(fftData));
                         }
                         if (recordFftDataListener != null) {
-                            recordFftDataListener.onFftData(data);
+                            recordFftDataListener.onFftData(fftData);
                         }
                     }
                 }
