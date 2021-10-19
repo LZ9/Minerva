@@ -3,7 +3,7 @@ package com.lodz.android.minervademo
 import com.lodz.android.corekt.log.PrintLog
 import com.lodz.android.minerva.recorder.wav.WavUtils
 import com.lodz.android.pandora.base.application.BaseApplication
-import fftlib.ByteUtils
+import com.lodz.android.minerva.fftlib.ByteUtils
 
 /**
  *

@@ -2,10 +2,10 @@ package com.lodz.android.minerva.recorder;
 
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.lodz.android.minerva.fftlib.FftFactory;
 import com.lodz.android.minerva.recorder.listener.RecordDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
@@ -27,8 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import fftlib.FftFactory;
 
 
 /**
@@ -213,10 +211,10 @@ public class RecordHelper {
                     byte[] fftData = fftFactory.makeFftData(data);
                     if (fftData != null) {
                         if (recordSoundSizeListener != null) {
-                            recordSoundSizeListener.onSoundSize(getDb(fftData));
+                            recordSoundSizeListener.onSoundSize(getDb(data));
                         }
                         if (recordFftDataListener != null) {
-                            recordFftDataListener.onFftData(fftData);
+                            recordFftDataListener.onFftData(data);
                         }
                     }
                 }

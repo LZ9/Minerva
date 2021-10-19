@@ -1,4 +1,4 @@
-package fftlib;
+package com.lodz.android.minerva.fftlib;
 
 
 import com.lodz.android.minerva.utils.Logger;

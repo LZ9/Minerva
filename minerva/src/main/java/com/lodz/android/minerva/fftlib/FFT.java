@@ -1,4 +1,4 @@
-package fftlib;
+package com.lodz.android.minerva.fftlib;
 
 
 public class FFT {
