@@ -1,4 +1,4 @@
-package com.zlw.main.recorderlib.recorder.mp3;
+package com.lodz.android.minerva.mp3;
 
 /**
  * @author zhaolewei on 2018/8/2.

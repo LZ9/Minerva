@@ -3,7 +3,7 @@
 
 static lame_global_flags *glf = NULL;
 
-JNIEXPORT void JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_init(
+JNIEXPORT void JNICALL Java_com_lodz_android_minerva_mp3_Mp3Encoder_init(
         JNIEnv *env, jclass cls, jint inSamplerate, jint outChannel,
         jint outSamplerate, jint outBitrate, jint quality) {
     if (glf != NULL) {
@@ -19,7 +19,7 @@ JNIEXPORT void JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_ini
     lame_init_params(glf);
 }
 
-JNIEXPORT jint JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_encode(
+JNIEXPORT jint JNICALL Java_com_lodz_android_minerva_mp3_Mp3Encoder_encode(
         JNIEnv *env, jclass cls, jshortArray buffer_l, jshortArray buffer_r,
         jint samples, jbyteArray mp3buf) {
     jshort* j_buffer_l = (*env)->GetShortArrayElements(env, buffer_l, NULL);
@@ -39,7 +39,7 @@ JNIEXPORT jint JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_enc
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_flush(
+JNIEXPORT jint JNICALL Java_com_lodz_android_minerva_mp3_Mp3Encoder_flush(
         JNIEnv *env, jclass cls, jbyteArray mp3buf) {
     const jsize mp3buf_size = (*env)->GetArrayLength(env, mp3buf);
     jbyte* j_mp3buf = (*env)->GetByteArrayElements(env, mp3buf, NULL);
@@ -51,7 +51,7 @@ JNIEXPORT jint JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_flu
     return result;
 }
 
-JNIEXPORT void JNICALL Java_com_zlw_main_recorderlib_recorder_mp3_Mp3Encoder_close(
+JNIEXPORT void JNICALL Java_com_lodz_android_minerva_mp3_Mp3Encoder_close(
         JNIEnv *env, jclass cls) {
     lame_close(glf);
     glf = NULL;
