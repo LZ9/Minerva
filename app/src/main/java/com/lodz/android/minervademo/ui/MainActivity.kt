@@ -1,9 +1,11 @@
-package com.lodz.android.minervademo
+package com.lodz.android.minervademo.ui
 
 import android.os.Bundle
 import android.view.View
 import com.lodz.android.corekt.anko.append
 import com.lodz.android.corekt.anko.getColorCompat
+import com.lodz.android.minervademo.utils.FileManager
+import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.databinding.ActivityMainBinding
 import com.lodz.android.pandora.base.activity.BaseActivity
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout

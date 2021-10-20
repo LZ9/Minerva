@@ -1,4 +1,4 @@
-package com.lodz.android.minervademo;
+package com.lodz.android.minervademo.ui;
 
 import android.media.AudioFormat;
 import android.os.Bundle;
@@ -21,6 +21,11 @@ import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
+import com.lodz.android.minervademo.App;
+import com.lodz.android.minervademo.widget.AudioView;
+import com.lodz.android.minervademo.BuildConfig;
+import com.lodz.android.minervademo.utils.FileManager;
+import com.lodz.android.minervademo.R;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
 

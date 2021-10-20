@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <TextView
         android:id="@+id/tvState"
@@ -156,7 +156,7 @@
         android:layout_height="wrap_content"
         android:text="停止" />
 
-    <com.lodz.android.minervademo.AudioView
+    <com.lodz.android.minervademo.widget.AudioView
         android:id="@+id/audioView"
         android:layout_width="match_parent"
         android:layout_height="150dp" />

@@ -1,4 +1,4 @@
-package com.lodz.android.minervademo;
+package com.lodz.android.minervademo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;

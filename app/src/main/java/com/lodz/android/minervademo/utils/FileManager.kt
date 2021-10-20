@@ -1,10 +1,11 @@
-package com.lodz.android.minervademo
+package com.lodz.android.minervademo.utils
 
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
 import com.lodz.android.corekt.anko.getStoragePath
 import com.lodz.android.corekt.utils.FileUtils
+import com.lodz.android.minervademo.App
 import java.io.File
 
 /**
