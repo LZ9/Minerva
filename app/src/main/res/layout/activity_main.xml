@@ -61,11 +61,11 @@
             android:text="@string/main_audio_format" />
 
         <TextView
-            android:id="@+id/simple_rate_tv"
+            android:id="@+id/sample_rate_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/main_simple_rate" />
+            android:text="@string/main_sample_rate" />
 
         <TextView
             android:id="@+id/encoding_tv"

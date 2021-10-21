@@ -10,7 +10,11 @@
     <string name="main_status">录音状态：</string>
     <string name="main_sound_size">当前分贝：</string>
     <string name="main_audio_format">音频格式：</string>
-    <string name="main_simple_rate">音频采样率：</string>
+    <string name="main_sample_rate">音频采样率：</string>
     <string name="main_encoding">音频位宽：</string>
+    <string name="main_ok">确定</string>
+    <string name="main_cancel">取消</string>
+
+    <string name="main_config_disable">只能在空闲状态进行配置</string>
 
 </resources>
