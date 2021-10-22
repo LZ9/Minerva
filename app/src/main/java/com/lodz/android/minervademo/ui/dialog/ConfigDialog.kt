@@ -1,6 +1,7 @@
 package com.lodz.android.minervademo.ui.dialog
 
 import android.content.Context
+import android.content.DialogInterface
 import android.view.View
 import com.lodz.android.corekt.anko.then
 import com.lodz.android.minervademo.config.Constant
@@ -22,6 +23,9 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
     private var mSampleRate = Constant.SAMPLE_RATE_16000
     /** 音频位宽 */
     private var mEncoding = Constant.ENCODING_16_BIT
+
+    /** 监听器 */
+    private var mListener :OnClickConfirmListener? = null
 
     private val mBinding : DialogConfigBinding by bindingLayout(DialogConfigBinding::inflate)
 
@@ -59,14 +63,29 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
         }
 
         mBinding.okBtn.setOnClickListener {
-
+            val audioFormat = (mBinding.audioFormatCrg.getSelectedId().isNotEmpty()).then { mBinding.audioFormatCrg.getSelectedId()[0].toInt() }
+                ?: Constant.AUDIO_FORMAT_WAV
+            val sampleRate = (mBinding.sampleRateCrg.getSelectedId().isNotEmpty()).then { mBinding.sampleRateCrg.getSelectedId()[0].toInt() }
+                ?: Constant.SAMPLE_RATE_16000
+            val encoding = (mBinding.encodingCrg.getSelectedId().isNotEmpty()).then { mBinding.encodingCrg.getSelectedId()[0].toInt() }
+                ?: Constant.ENCODING_16_BIT
+            mListener?.onClick(getDialogInterface(), audioFormat, sampleRate, encoding)
         }
     }
 
+    /** 设置数据[audioFormat]音频格式，[sampleRate]采样率，[encoding]音频位宽 */
     fun setData(audioFormat: Int, sampleRate: Int, encoding: Int) {
         mAudioFormat = audioFormat
         mSampleRate = sampleRate
         mEncoding = encoding
     }
 
+    /** 设置监听器[listener] */
+    fun setOnClickConfirmListener(listener: OnClickConfirmListener?) {
+        mListener = listener
+    }
+
+    fun interface OnClickConfirmListener {
+        fun onClick(dif: DialogInterface, audioFormat: Int, sampleRate: Int, encoding: Int)
+    }
 }

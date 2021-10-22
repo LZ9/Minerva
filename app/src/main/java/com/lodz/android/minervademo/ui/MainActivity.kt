@@ -38,6 +38,7 @@ class MainActivity : BaseActivity() {
     override fun findViews(savedInstanceState: Bundle?) {
         super.findViews(savedInstanceState)
         setTitleBar(getTitleBarLayout())
+        updateConfigView()
         mBinding.savePathTv.text = getString(R.string.main_save_path).append(FileManager.getContentFolderPath())
         mBinding.startBtn.isEnabled = true
         mBinding.pauseBtn.isEnabled = false
@@ -73,10 +74,30 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /** 更新配置相关控件 */
+    private fun updateConfigView(){
+        mBinding.audioFormatTv.text = getString(R.string.main_audio_format).append(
+            DictManager.get().getDictBean(Constant.DICT_AUDIO_FORMAT, mAudioFormat)?.value ?: "-"
+        )
+        mBinding.sampleRateTv.text = getString(R.string.main_sample_rate).append(
+            DictManager.get().getDictBean(Constant.DICT_SAMPLE_RATE, mSampleRate)?.value ?: "-"
+        )
+        mBinding.encodingTv.text = getString(R.string.main_encoding).append(
+            DictManager.get().getDictBean(Constant.DICT_ENCODING, mEncoding)?.value ?: "-"
+        )
+    }
+
     /** 显示配置弹框 */
     private fun showConfigDialog() {
         val dialog = ConfigDialog(getContext())
         dialog.setData(mAudioFormat, mSampleRate, mEncoding)
+        dialog.setOnClickConfirmListener { dif, audioFormat, sampleRate, encoding ->
+            mAudioFormat = audioFormat
+            mSampleRate = sampleRate
+            mEncoding = encoding
+            updateConfigView()
+            dif.dismiss()
+        }
         dialog.show()
     }
 
