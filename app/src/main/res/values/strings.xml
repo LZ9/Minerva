@@ -22,6 +22,9 @@
     <string name="main_encoding">音频位宽：</string>
     <string name="main_ok">确定</string>
     <string name="main_cancel">取消</string>
+    <string name="main_delete_all">刪除全部</string>
+    <string name="main_delete">刪除</string>
+    <string name="main_play">播放</string>
 
     <string name="main_config_disable">只能在空闲状态进行配置</string>
 

@@ -76,20 +76,54 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/save_path_tv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/main_save_path"
-        android:textColor="@color/color_00a1d5" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/audio_rv"
+        <TextView
+            android:id="@+id/save_path_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/main_save_path"
+            android:textColor="@color/color_00a1d5" />
+
+        <TextView
+            android:id="@+id/delete_all_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_bg_config"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/main_delete_all"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/audio_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <com.lodz.android.pandora.widget.base.NoDataLayout
+            android:id="@+id/no_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

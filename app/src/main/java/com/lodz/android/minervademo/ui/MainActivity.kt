@@ -1,12 +1,20 @@
 package com.lodz.android.minervademo.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.*
+import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minervademo.App
+import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
 import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.config.Constant
@@ -18,6 +26,9 @@ import com.lodz.android.pandora.utils.viewbinding.bindingLayout
 import com.lodz.android.pandora.widget.base.TitleBarLayout
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.ktx.constructPermissionsRequest
+import java.io.File
+
+@SuppressLint("NotifyDataSetChanged")
 
 class MainActivity : BaseActivity() {
 
@@ -29,6 +40,8 @@ class MainActivity : BaseActivity() {
     private var mSampleRate = Constant.SAMPLE_RATE_16000
     /** 音频位宽 */
     private var mEncoding = Constant.ENCODING_16_BIT
+
+    private lateinit var mAdapter: AudioFilesAdapter
 
     private val hasRecordAudioPermissions by lazy {
         constructPermissionsRequest(
@@ -74,6 +87,7 @@ class MainActivity : BaseActivity() {
         super.findViews(savedInstanceState)
         setTitleBar(getTitleBarLayout())
         updateConfigView()
+        initRecyclerView()
         mBinding.savePathTv.text = getString(R.string.main_save_path).append(FileManager.getContentFolderPath())
         mBinding.startBtn.isEnabled = true
         mBinding.pauseBtn.isEnabled = false
@@ -83,6 +97,16 @@ class MainActivity : BaseActivity() {
         titleBarLayout.needBackButton(false)
         titleBarLayout.setBackgroundColor(getColorCompat(R.color.color_00a1d5))
         titleBarLayout.setTitleName(R.string.app_name)
+    }
+
+    private fun initRecyclerView() {
+        mAdapter = AudioFilesAdapter(getContext())
+        val layoutManager = LinearLayoutManager(getContext())
+        layoutManager.orientation = RecyclerView.VERTICAL
+        mBinding.audioRv.layoutManager = layoutManager
+        mAdapter.onAttachedToRecyclerView(mBinding.audioRv)// 如果使用网格布局请设置此方法
+        mBinding.audioRv.setHasFixedSize(true)
+        mBinding.audioRv.adapter = mAdapter
     }
 
     override fun setListeners() {
@@ -96,6 +120,13 @@ class MainActivity : BaseActivity() {
             toastShort(R.string.main_config_disable)
         }
 
+        mBinding.deleteAllBtn.setOnClickListener {
+            FileUtils.delFile(FileManager.getContentFolderPath())
+            mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
+            mAdapter.notifyDataSetChanged()
+            toggleRvDataView()
+        }
+
         mBinding.startBtn.setOnClickListener {
 
         }
@@ -107,6 +138,27 @@ class MainActivity : BaseActivity() {
         mBinding.pauseBtn.setOnClickListener {
 
         }
+
+        mAdapter.setOnAudioFileListener(object :AudioFilesAdapter.OnAudioFileListener{
+            override fun onClickPlay(file: File) {
+                val intent = Intent(Intent.ACTION_VIEW)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    val uri = FileProvider.getUriForFile(getContext(), BuildConfig.AUTHORITY, file)
+                    intent.setDataAndType(uri, "audio/*")
+                } else {
+                    intent.setDataAndType(Uri.fromFile(file), "audio/*")
+                }
+                getContext().startActivity(intent)
+            }
+
+            override fun onClickDelete(file: File) {
+                FileUtils.delFile(file.absolutePath)
+                mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
+                mAdapter.notifyDataSetChanged()
+                toggleRvDataView()
+            }
+        })
     }
 
     /** 更新配置相关控件 */
@@ -147,7 +199,15 @@ class MainActivity : BaseActivity() {
 
     /** 初始化 */
     private fun init() {
+        mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
+        toggleRvDataView()
         showStatusCompleted()
+    }
+
+    /** 切换列表有无数据页面 */
+    private fun toggleRvDataView(){
+        mBinding.audioRv.visibility = (mAdapter.itemCount == 0).then { View.GONE } ?: View.VISIBLE
+        mBinding.noDataLayout.visibility = (mAdapter.itemCount == 0).then { View.VISIBLE } ?: View.GONE
     }
 
     /** 权限申请成功 */
