@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.*
@@ -147,7 +148,7 @@ class MainActivity : BaseActivity() {
                     val uri = FileProvider.getUriForFile(getContext(), BuildConfig.AUTHORITY, file)
                     intent.setDataAndType(uri, "audio/*")
                 } else {
-                    intent.setDataAndType(Uri.fromFile(file), "audio/*")
+                    intent.setDataAndType(file.toUri(), "audio/*")
                 }
                 getContext().startActivity(intent)
             }
