@@ -3,7 +3,6 @@ package com.lodz.android.minervademo.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -19,19 +18,20 @@ import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
 import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.config.Constant
-import com.lodz.android.minervademo.databinding.ActivityMainBinding
+import com.lodz.android.minervademo.databinding.ActivityMainBottomBinding
+import com.lodz.android.minervademo.databinding.ActivityMainContentBinding
+import com.lodz.android.minervademo.databinding.ActivityMainTopBinding
 import com.lodz.android.minervademo.ui.dialog.ConfigDialog
 import com.lodz.android.minervademo.utils.DictManager
-import com.lodz.android.pandora.base.activity.BaseActivity
+import com.lodz.android.pandora.base.activity.BaseSandwichActivity
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
-import com.lodz.android.pandora.widget.base.TitleBarLayout
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.ktx.constructPermissionsRequest
 import java.io.File
 
 @SuppressLint("NotifyDataSetChanged")
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseSandwichActivity() {
 
     /** 状态 */
     private var mStatus = Constant.STATUS_IDLE
@@ -74,10 +74,13 @@ class MainActivity : BaseActivity() {
         )
     }
 
+    private val mTopBinding: ActivityMainTopBinding by bindingLayout(ActivityMainTopBinding::inflate)
+    private val mContentBinding: ActivityMainContentBinding by bindingLayout(ActivityMainContentBinding::inflate)
+    private val mBottomBinding: ActivityMainBottomBinding by bindingLayout(ActivityMainBottomBinding::inflate)
 
-    private val mBinding: ActivityMainBinding by bindingLayout(ActivityMainBinding::inflate)
-
-    override fun getViewBindingLayout(): View = mBinding.root
+    override fun getTopViewBindingLayout(): View = mTopBinding.root
+    override fun getViewBindingLayout(): View = mContentBinding.root
+    override fun getBottomViewBindingLayout(): View = mBottomBinding.root
 
     override fun startCreate() {
         super.startCreate()
@@ -86,34 +89,41 @@ class MainActivity : BaseActivity() {
 
     override fun findViews(savedInstanceState: Bundle?) {
         super.findViews(savedInstanceState)
-        setTitleBar(getTitleBarLayout())
+        setSwipeRefreshEnabled(true)
+        setTitleBar()
         updateConfigView()
         initRecyclerView()
-        mBinding.savePathTv.text = getString(R.string.main_save_path).append(FileManager.getContentFolderPath())
-        mBinding.startBtn.isEnabled = true
-        mBinding.pauseBtn.isEnabled = false
+        mTopBinding.savePathTv.text = getString(R.string.main_save_path).append(FileManager.getContentFolderPath())
+        mBottomBinding.startBtn.isEnabled = true
+        mBottomBinding.pauseBtn.isEnabled = false
     }
 
-    private fun setTitleBar(titleBarLayout: TitleBarLayout) {
-        titleBarLayout.needBackButton(false)
-        titleBarLayout.setBackgroundColor(getColorCompat(R.color.color_00a1d5))
-        titleBarLayout.setTitleName(R.string.app_name)
+    private fun setTitleBar() {
+        mTopBinding.titleBarLayout.needBackButton(false)
+        mTopBinding.titleBarLayout.setBackgroundColor(getColorCompat(R.color.color_00a1d5))
+        mTopBinding.titleBarLayout.setTitleName(R.string.app_name)
     }
 
     private fun initRecyclerView() {
         mAdapter = AudioFilesAdapter(getContext())
         val layoutManager = LinearLayoutManager(getContext())
         layoutManager.orientation = RecyclerView.VERTICAL
-        mBinding.audioRv.layoutManager = layoutManager
-        mAdapter.onAttachedToRecyclerView(mBinding.audioRv)// 如果使用网格布局请设置此方法
-        mBinding.audioRv.setHasFixedSize(true)
-        mBinding.audioRv.adapter = mAdapter
+        mContentBinding.audioRv.layoutManager = layoutManager
+        mAdapter.onAttachedToRecyclerView(mContentBinding.audioRv)// 如果使用网格布局请设置此方法
+        mContentBinding.audioRv.setHasFixedSize(true)
+        mContentBinding.audioRv.adapter = mAdapter
+    }
+
+    override fun onDataRefresh() {
+        super.onDataRefresh()
+        updateAudioFileList()
+        setSwipeRefreshFinish()
     }
 
     override fun setListeners() {
         super.setListeners()
 
-        mBinding.configBtn.setOnClickListener {
+        mTopBinding.configBtn.setOnClickListener {
             if (mStatus == Constant.STATUS_IDLE) {
                 showConfigDialog()
                 return@setOnClickListener
@@ -121,22 +131,20 @@ class MainActivity : BaseActivity() {
             toastShort(R.string.main_config_disable)
         }
 
-        mBinding.deleteAllBtn.setOnClickListener {
+        mTopBinding.deleteAllBtn.setOnClickListener {
             FileUtils.delFile(FileManager.getContentFolderPath())
-            mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
-            mAdapter.notifyDataSetChanged()
-            toggleRvDataView()
+            updateAudioFileList()
         }
 
-        mBinding.startBtn.setOnClickListener {
-
-        }
-
-        mBinding.stopBtn.setOnClickListener {
+        mBottomBinding.startBtn.setOnClickListener {
 
         }
 
-        mBinding.pauseBtn.setOnClickListener {
+        mBottomBinding.stopBtn.setOnClickListener {
+
+        }
+
+        mBottomBinding.pauseBtn.setOnClickListener {
 
         }
 
@@ -155,22 +163,20 @@ class MainActivity : BaseActivity() {
 
             override fun onClickDelete(file: File) {
                 FileUtils.delFile(file.absolutePath)
-                mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
-                mAdapter.notifyDataSetChanged()
-                toggleRvDataView()
+                updateAudioFileList()
             }
         })
     }
 
     /** 更新配置相关控件 */
     private fun updateConfigView(){
-        mBinding.audioFormatTv.text = getString(R.string.main_audio_format).append(
+        mTopBinding.audioFormatTv.text = getString(R.string.main_audio_format).append(
             DictManager.get().getDictBean(Constant.DICT_AUDIO_FORMAT, mAudioFormat)?.value ?: "-"
         )
-        mBinding.sampleRateTv.text = getString(R.string.main_sample_rate).append(
+        mTopBinding.sampleRateTv.text = getString(R.string.main_sample_rate).append(
             DictManager.get().getDictBean(Constant.DICT_SAMPLE_RATE, mSampleRate)?.value ?: "-"
         )
-        mBinding.encodingTv.text = getString(R.string.main_encoding).append(
+        mTopBinding.encodingTv.text = getString(R.string.main_encoding).append(
             DictManager.get().getDictBean(Constant.DICT_ENCODING, mEncoding)?.value ?: "-"
         )
     }
@@ -200,15 +206,18 @@ class MainActivity : BaseActivity() {
 
     /** 初始化 */
     private fun init() {
-        mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
-        toggleRvDataView()
-        showStatusCompleted()
+        updateAudioFileList()
     }
 
-    /** 切换列表有无数据页面 */
-    private fun toggleRvDataView(){
-        mBinding.audioRv.visibility = (mAdapter.itemCount == 0).then { View.GONE } ?: View.VISIBLE
-        mBinding.noDataLayout.visibility = (mAdapter.itemCount == 0).then { View.VISIBLE } ?: View.GONE
+    /** 更新音频文件列表数据 */
+    private fun updateAudioFileList(){
+        mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
+        mAdapter.notifyDataSetChanged()
+        if (mAdapter.itemCount == 0) {
+            showStatusNoData()
+        } else {
+            showStatusCompleted()
+        }
     }
 
     /** 权限申请成功 */
