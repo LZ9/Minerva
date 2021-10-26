@@ -13,7 +13,7 @@
         android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:text="@string/main_config_title"
+        android:text="@string/simple_config_title"
         android:textColor="@color/white"
         android:textSize="18sp" />
 
@@ -32,7 +32,7 @@
             app:radioType="single"
             app:requiredVisibility="gone"
             app:spanCount="3"
-            app:titleText="@string/main_audio_format">
+            app:titleText="@string/simple_audio_format">
 
         </com.lodz.android.pandora.widget.collect.radio.CltRadioGroup>
 
@@ -45,7 +45,7 @@
             app:radioType="single"
             app:requiredVisibility="gone"
             app:spanCount="3"
-            app:titleText="@string/main_sample_rate">
+            app:titleText="@string/simple_sample_rate">
 
         </com.lodz.android.pandora.widget.collect.radio.CltRadioGroup>
 
@@ -58,7 +58,7 @@
             app:radioType="single"
             app:requiredVisibility="gone"
             app:spanCount="3"
-            app:titleText="@string/main_encoding">
+            app:titleText="@string/simple_encoding">
 
         </com.lodz.android.pandora.widget.collect.radio.CltRadioGroup>
 
@@ -79,7 +79,7 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:backgroundTint="@color/color_00a1d5"
-            android:text="@string/main_ok" />
+            android:text="@string/simple_ok" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btn"
@@ -88,7 +88,7 @@
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:backgroundTint="@color/color_00a1d5"
-            android:text="@string/main_cancel" />
+            android:text="@string/simple_cancel" />
 
     </LinearLayout>
 

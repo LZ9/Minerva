@@ -8,24 +8,26 @@
     <string name="main_check_permission_confirm">已确认</string>
     <string name="main_check_permission_unconfirmed">再次确认</string>
     <string name="main_check_permission_cancel">请在设置中打开权限后重启应用</string>
+    <string name="main_simple">基础实现</string>
+    <string name="main_service">服务实现</string>
+    <string name="main_vad">端点检测</string>
 
-    <string name="main_config_title">配置参数</string>
-    <string name="main_config">配置</string>
-    <string name="main_recording_start">开始</string>
-    <string name="main_recording_pause">暂停</string>
-    <string name="main_recording_stop">结束</string>
-    <string name="main_save_path">保存路径：</string>
-    <string name="main_status">录音状态：</string>
-    <string name="main_sound_size">当前分贝：</string>
-    <string name="main_audio_format">音频格式：</string>
-    <string name="main_sample_rate">音频采样率：</string>
-    <string name="main_encoding">音频位宽：</string>
-    <string name="main_ok">确定</string>
-    <string name="main_cancel">取消</string>
-    <string name="main_delete_all">刪除全部</string>
-    <string name="main_delete">刪除</string>
-    <string name="main_play">播放</string>
-
-    <string name="main_config_disable">只能在空闲状态进行配置</string>
+    <string name="simple_config_title">配置参数</string>
+    <string name="simple_config">配置</string>
+    <string name="simple_recording_start">开始</string>
+    <string name="simple_recording_pause">暂停</string>
+    <string name="simple_recording_stop">结束</string>
+    <string name="simple_save_path">保存路径：</string>
+    <string name="simple_status">录音状态：</string>
+    <string name="simple_sound_size">当前分贝：</string>
+    <string name="simple_audio_format">音频格式：</string>
+    <string name="simple_sample_rate">音频采样率：</string>
+    <string name="simple_encoding">音频位宽：</string>
+    <string name="simple_ok">确定</string>
+    <string name="simple_cancel">取消</string>
+    <string name="simple_delete_all">刪除全部</string>
+    <string name="simple_delete">刪除</string>
+    <string name="simple_play">播放</string>
+    <string name="simple_config_disable">只能在空闲状态进行配置</string>
 
 </resources>

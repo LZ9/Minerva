@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/main_config_title"
+                android:text="@string/simple_config_title"
                 android:textColor="@color/color_00a1d5"
                 android:textSize="18sp" />
 
@@ -40,7 +40,7 @@
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="5dp"
-                android:text="@string/main_config"
+                android:text="@string/simple_config"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -49,35 +49,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/main_status" />
+            android:text="@string/simple_status" />
 
         <TextView
             android:id="@+id/sound_size_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/main_sound_size" />
+            android:text="@string/simple_sound_size" />
 
         <TextView
             android:id="@+id/audio_format_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/main_audio_format" />
+            android:text="@string/simple_audio_format" />
 
         <TextView
             android:id="@+id/sample_rate_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/main_sample_rate" />
+            android:text="@string/simple_sample_rate" />
 
         <TextView
             android:id="@+id/encoding_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/main_encoding" />
+            android:text="@string/simple_encoding" />
 
     </LinearLayout>
 
@@ -93,7 +93,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/main_save_path"
+            android:text="@string/simple_save_path"
             android:textColor="@color/color_00a1d5" />
 
         <TextView
@@ -105,7 +105,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:text="@string/main_delete_all"
+            android:text="@string/simple_delete_all"
             android:textColor="@color/white" />
 
     </LinearLayout>

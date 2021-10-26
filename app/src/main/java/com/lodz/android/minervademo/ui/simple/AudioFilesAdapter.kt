@@ -1,4 +1,4 @@
-package com.lodz.android.minervademo.ui
+package com.lodz.android.minervademo.ui.simple
 
 import android.content.Context
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import java.io.File
  */
 class AudioFilesAdapter(context: Context) :BaseRecyclerViewAdapter<File>(context){
 
-    private var mListener :OnAudioFileListener? = null
+    private var mListener : OnAudioFileListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         DataVBViewHolder(getViewBindingLayout(RvItemAudioFileBinding::inflate, parent))
@@ -32,7 +32,7 @@ class AudioFilesAdapter(context: Context) :BaseRecyclerViewAdapter<File>(context
 
     private fun showItem(holder: DataVBViewHolder, bean: File) {
         holder.getVB<RvItemAudioFileBinding>().apply {
-            fileNameTv.text = bean.name.append("(").append(FileUtils.getFileTotalLengthUnit(bean.absolutePath)).append(")")
+            fileNameTv.text = bean.name.append("\n").append("(").append(FileUtils.getFileTotalLengthUnit(bean.absolutePath)).append(")")
             deleteBtn.setOnClickListener {
                 mListener?.onClickDelete(bean)
             }

@@ -36,7 +36,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:text="@string/main_play"
+            android:text="@string/simple_play"
             android:textColor="@color/white" />
 
         <TextView
@@ -49,7 +49,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:text="@string/main_delete"
+            android:text="@string/simple_delete"
             android:textColor="@color/white" />
 
     </LinearLayout>

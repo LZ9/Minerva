@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/main_recording_start" />
+        android:text="@string/simple_recording_start" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/pause_btn"
@@ -21,12 +21,12 @@
         android:layout_marginEnd="5dp"
         android:layout_weight="1"
         android:enabled="false"
-        android:text="@string/main_recording_pause" />
+        android:text="@string/simple_recording_pause" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/stop_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/main_recording_stop" />
+        android:text="@string/simple_recording_stop" />
 </LinearLayout>
