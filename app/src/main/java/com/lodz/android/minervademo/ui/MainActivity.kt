@@ -3,6 +3,7 @@ package com.lodz.android.minervademo.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.AudioFormat
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -13,6 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.*
 import com.lodz.android.corekt.utils.FileUtils
+import com.lodz.android.minerva.RecordManager
+import com.lodz.android.minerva.recorder.RecordConfig
+import com.lodz.android.minerva.recorder.RecordHelper
+import com.lodz.android.minerva.recorder.listener.RecordStateListener
 import com.lodz.android.minervademo.App
 import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
@@ -24,13 +29,16 @@ import com.lodz.android.minervademo.databinding.ActivityMainTopBinding
 import com.lodz.android.minervademo.ui.dialog.ConfigDialog
 import com.lodz.android.minervademo.utils.DictManager
 import com.lodz.android.pandora.base.activity.BaseSandwichActivity
+import com.lodz.android.pandora.rx.subscribe.single.BaseSingleObserver
+import com.lodz.android.pandora.rx.utils.RxUtils
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
+import io.reactivex.rxjava3.core.Observable
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.ktx.constructPermissionsRequest
 import java.io.File
+import java.util.*
 
 @SuppressLint("NotifyDataSetChanged")
-
 class MainActivity : BaseSandwichActivity() {
 
     /** 状态 */
@@ -43,6 +51,8 @@ class MainActivity : BaseSandwichActivity() {
     private var mEncoding = Constant.ENCODING_16_BIT
 
     private lateinit var mAdapter: AudioFilesAdapter
+
+    private val mRecordManager = RecordManager.getInstance()
 
     private val hasRecordAudioPermissions by lazy {
         constructPermissionsRequest(
@@ -93,6 +103,8 @@ class MainActivity : BaseSandwichActivity() {
         setTitleBar()
         updateConfigView()
         initRecyclerView()
+        mTopBinding.statusTv.text = getString(R.string.main_status)
+            .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
         mTopBinding.savePathTv.text = getString(R.string.main_save_path).append(FileManager.getContentFolderPath())
         mBottomBinding.startBtn.isEnabled = true
         mBottomBinding.pauseBtn.isEnabled = false
@@ -137,15 +149,19 @@ class MainActivity : BaseSandwichActivity() {
         }
 
         mBottomBinding.startBtn.setOnClickListener {
-
+            if (mStatus == Constant.STATUS_PAUSE) {
+                mRecordManager.resume()
+            } else {
+                mRecordManager.start()
+            }
         }
 
         mBottomBinding.stopBtn.setOnClickListener {
-
+            mRecordManager.stop()
         }
 
         mBottomBinding.pauseBtn.setOnClickListener {
-
+            mRecordManager.pause()
         }
 
         mAdapter.setOnAudioFileListener(object :AudioFilesAdapter.OnAudioFileListener{
@@ -166,6 +182,51 @@ class MainActivity : BaseSandwichActivity() {
                 updateAudioFileList()
             }
         })
+
+
+        mRecordManager.setRecordStateListener(object : RecordStateListener {
+            override fun onStateChange(state: RecordHelper.RecordState) {
+                when (state) {
+                    RecordHelper.RecordState.PAUSE -> {// 暂停中
+                        mStatus = Constant.STATUS_PAUSE
+                    }
+                    RecordHelper.RecordState.IDLE -> {// 空闲中
+                        mStatus = Constant.STATUS_IDLE
+                    }
+                    RecordHelper.RecordState.RECORDING -> {//录音中
+                        mStatus = Constant.STATUS_RECORDING
+                    }
+                    RecordHelper.RecordState.STOP -> {//停止
+                        mStatus = Constant.STATUS_IDLE
+                    }
+                    RecordHelper.RecordState.FINISH -> {//录音结束
+                        mStatus = Constant.STATUS_IDLE
+                    }
+                }
+                mTopBinding.statusTv.text = getString(R.string.main_status)
+                    .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
+
+                mBottomBinding.startBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
+                mBottomBinding.pauseBtn.isEnabled = mStatus == Constant.STATUS_RECORDING
+            }
+
+            override fun onError(error: String?) {
+                toastShort(error ?: "未知异常")
+            }
+        })
+
+        mRecordManager.setRecordSoundSizeListener {
+            mTopBinding.soundSizeTv.text = getString(R.string.main_sound_size).append("$it db")
+        }
+
+        mRecordManager.setRecordResultListener {
+            toastShort(it.absolutePath)
+            updateAudioFileList()
+        }
+
+        mRecordManager.setRecordFftDataListener {
+
+        }
     }
 
     /** 更新配置相关控件 */
@@ -190,6 +251,7 @@ class MainActivity : BaseSandwichActivity() {
             mSampleRate = sampleRate
             mEncoding = encoding
             updateConfigView()
+            updateRecordConfig()
             dif.dismiss()
         }
         dialog.show()
@@ -207,17 +269,63 @@ class MainActivity : BaseSandwichActivity() {
     /** 初始化 */
     private fun init() {
         updateAudioFileList()
+        initRecord()
+    }
+
+    private fun initRecord() {
+        mRecordManager.init(App.get(), true)
+        updateRecordConfig()
+        mRecordManager.changeRecordDir(FileManager.getContentFolderPath())
     }
 
     /** 更新音频文件列表数据 */
     private fun updateAudioFileList(){
-        mAdapter.setData(FileUtils.getFileList(FileManager.getContentFolderPath()))
-        mAdapter.notifyDataSetChanged()
-        if (mAdapter.itemCount == 0) {
-            showStatusNoData()
-        } else {
-            showStatusCompleted()
-        }
+        Observable.fromIterable(FileUtils.getFileList(FileManager.getContentFolderPath()))
+            .sorted { file1, file2 ->
+                val diff = file1.lastModified() - file2.lastModified()
+                return@sorted when {
+                    diff > 0 -> -1
+                    diff == 0L -> 0
+                    else -> 1
+                }
+            }
+            .toList()
+            .compose(RxUtils.ioToMainSingle())
+            .subscribe(BaseSingleObserver.action(
+                success = {
+                    mAdapter.setData(it)
+                    mAdapter.notifyDataSetChanged()
+                    if (mAdapter.itemCount == 0) {
+                        showStatusNoData()
+                    } else {
+                        showStatusCompleted()
+                    }
+                }
+            ))
+    }
+
+    /** 更新录音配置 */
+    private fun updateRecordConfig(){
+        mRecordManager.changeFormat(
+            when (mAudioFormat) {
+                Constant.AUDIO_FORMAT_WAV -> RecordConfig.RecordFormat.WAV
+                Constant.AUDIO_FORMAT_MP3 -> RecordConfig.RecordFormat.MP3
+                else -> RecordConfig.RecordFormat.PCM
+            }
+        )
+        mRecordManager.changeRecordConfig(
+            when (mSampleRate) {
+                Constant.SAMPLE_RATE_8000 -> mRecordManager.getRecordConfig().setSampleRate(8000)
+                Constant.SAMPLE_RATE_16000 -> mRecordManager.getRecordConfig().setSampleRate(16000)
+                else -> mRecordManager.getRecordConfig().setSampleRate(44100)
+            }
+        )
+        mRecordManager.changeRecordConfig(
+            when (mEncoding) {
+                Constant.ENCODING_8_BIT -> mRecordManager.getRecordConfig().setEncodingConfig(AudioFormat.ENCODING_PCM_8BIT)
+                else -> mRecordManager.getRecordConfig().setEncodingConfig(AudioFormat.ENCODING_PCM_16BIT)
+            }
+        )
     }
 
     /** 权限申请成功 */
