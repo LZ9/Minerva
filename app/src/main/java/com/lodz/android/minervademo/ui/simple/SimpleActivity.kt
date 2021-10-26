@@ -1,4 +1,4 @@
-package com.lodz.android.minervademo.ui
+package com.lodz.android.minervademo.ui.simple
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -23,9 +23,10 @@ import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
 import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.config.Constant
-import com.lodz.android.minervademo.databinding.ActivityMainBottomBinding
-import com.lodz.android.minervademo.databinding.ActivityMainContentBinding
-import com.lodz.android.minervademo.databinding.ActivityMainTopBinding
+import com.lodz.android.minervademo.databinding.ActivitySimpleBottomBinding
+import com.lodz.android.minervademo.databinding.ActivitySimpleContentBinding
+import com.lodz.android.minervademo.databinding.ActivitySimpleTopBinding
+import com.lodz.android.minervademo.ui.AudioFilesAdapter
 import com.lodz.android.minervademo.ui.dialog.ConfigDialog
 import com.lodz.android.minervademo.utils.DictManager
 import com.lodz.android.pandora.base.activity.BaseSandwichActivity
@@ -39,7 +40,7 @@ import java.io.File
 import java.util.*
 
 @SuppressLint("NotifyDataSetChanged")
-class MainActivity : BaseSandwichActivity() {
+class SimpleActivity : BaseSandwichActivity() {
 
     /** 状态 */
     private var mStatus = Constant.STATUS_IDLE
@@ -84,9 +85,9 @@ class MainActivity : BaseSandwichActivity() {
         )
     }
 
-    private val mTopBinding: ActivityMainTopBinding by bindingLayout(ActivityMainTopBinding::inflate)
-    private val mContentBinding: ActivityMainContentBinding by bindingLayout(ActivityMainContentBinding::inflate)
-    private val mBottomBinding: ActivityMainBottomBinding by bindingLayout(ActivityMainBottomBinding::inflate)
+    private val mTopBinding: ActivitySimpleTopBinding by bindingLayout(ActivitySimpleTopBinding::inflate)
+    private val mContentBinding: ActivitySimpleContentBinding by bindingLayout(ActivitySimpleContentBinding::inflate)
+    private val mBottomBinding: ActivitySimpleBottomBinding by bindingLayout(ActivitySimpleBottomBinding::inflate)
 
     override fun getTopViewBindingLayout(): View = mTopBinding.root
     override fun getViewBindingLayout(): View = mContentBinding.root
@@ -164,7 +165,7 @@ class MainActivity : BaseSandwichActivity() {
             mRecordManager.pause()
         }
 
-        mAdapter.setOnAudioFileListener(object :AudioFilesAdapter.OnAudioFileListener{
+        mAdapter.setOnAudioFileListener(object : AudioFilesAdapter.OnAudioFileListener {
             override fun onClickPlay(file: File) {
                 val intent = Intent(Intent.ACTION_VIEW)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

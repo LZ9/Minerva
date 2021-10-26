@@ -22,10 +22,10 @@ import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
 import com.lodz.android.minervademo.App;
-import com.lodz.android.minervademo.widget.AudioView;
 import com.lodz.android.minervademo.BuildConfig;
-import com.lodz.android.minervademo.utils.FileManager;
 import com.lodz.android.minervademo.R;
+import com.lodz.android.minervademo.utils.FileManager;
+import com.lodz.android.minervademo.widget.AudioView;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
 
@@ -37,7 +37,7 @@ import java.util.Locale;
  * @date 2021/10/18
  */
 public class MainActivity2  extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity2.class.getSimpleName();
 
     private Button btRecord;
     private Button btStop;
