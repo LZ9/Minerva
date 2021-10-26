@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.lodz.android.minerva.recorder.listener.RecordDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
@@ -12,7 +13,6 @@ import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
 import com.lodz.android.minerva.utils.FileUtils;
-import com.lodz.android.minerva.utils.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -169,22 +169,22 @@ public class RecordService extends Service {
     }
 
     private void doStartRecording(String path) {
-        Logger.v(TAG, "doStartRecording path: %s", path);
+        Log.v(TAG, "doStartRecording path: "+ path);
         RecordHelper.getInstance().start(path, currentConfig);
     }
 
     private void doResumeRecording() {
-        Logger.v(TAG, "doResumeRecording");
+        Log.v(TAG, "doResumeRecording");
         RecordHelper.getInstance().resume();
     }
 
     private void doPauseRecording() {
-        Logger.v(TAG, "doResumeRecording");
+        Log.v(TAG, "doResumeRecording");
         RecordHelper.getInstance().pause();
     }
 
     private void doStopRecording() {
-        Logger.v(TAG, "doStopRecording");
+        Log.v(TAG, "doStopRecording");
         RecordHelper.getInstance().stop();
         stopSelf();
     }
@@ -205,7 +205,7 @@ public class RecordService extends Service {
 
         String fileDir = currentConfig.getRecordDir();
         if (!FileUtils.createOrExistsDir(fileDir)) {
-            Logger.w(TAG, "文件夹创建失败：%s", fileDir);
+            Log.w(TAG, "文件夹创建失败：%s"+ fileDir);
             return null;
         }
         String fileName = String.format(Locale.getDefault(), "record_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));

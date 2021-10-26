@@ -2,10 +2,10 @@ package com.lodz.android.minerva.mp3;
 
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.util.Log;
 
 import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.utils.FileUtils;
-import com.lodz.android.minerva.utils.Logger;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class Mp3Utils {
             long duration = mf.getLong(MediaFormat.KEY_DURATION) / 1000L;
             return duration;
         } catch (IOException e) {
-            Logger.e(e, TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if (mex != null) {
                 mex.release();

@@ -1,7 +1,7 @@
 package com.lodz.android.minerva.fftlib;
 
 
-import com.lodz.android.minerva.utils.Logger;
+import android.util.Log;
 
 /**
  * FFT 数据处理工厂
@@ -15,9 +15,9 @@ public class FftFactory {
     }
 
     public byte[] makeFftData(byte[] pcmData) {
-//        Logger.d(TAG, "pcmData length: %s", pcmData.length);
+//        Log.d(TAG, "pcmData length: %s", pcmData.length);
         if (pcmData.length < 1024) {
-            Logger.d(TAG, "makeFftData");
+            Log.d(TAG, "makeFftData");
             return null;
         }
 

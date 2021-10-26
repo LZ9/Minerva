@@ -1,10 +1,11 @@
 package com.lodz.android.minerva.recorder.wav;
 
 
+import android.util.Log;
+
 import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.utils.ByteUtils;
 import com.lodz.android.minerva.utils.FileUtils;
-import com.lodz.android.minerva.utils.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,14 +54,14 @@ public class WavUtils {
             wavRaf.write(header);
             wavRaf.close();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             try {
                 if (wavRaf != null) {
                     wavRaf.close();
                 }
             } catch (IOException e) {
-                Logger.e(e, TAG, e.getMessage());
+                Log.e(TAG, e.getMessage());
 
             }
         }
@@ -104,13 +105,13 @@ public class WavUtils {
             byte[] b = new byte[size];
             int len;
             if ((len = fis.read(b)) != size) {
-                Logger.e(TAG, "读取失败 len: %s", len);
+                Log.e(TAG, "读取失败 len: "+len);
                 return null;
             }
             bos.write(b, 0, len);
             buffer = bos.toByteArray();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             try {
                 if (fis != null) {
@@ -122,7 +123,7 @@ public class WavUtils {
                     bos = null;
                 }
             } catch (IOException e) {
-                Logger.e(e, TAG, e.getMessage());
+                Log.e(TAG, e.getMessage());
             }
         }
         return buffer;
@@ -150,7 +151,7 @@ public class WavUtils {
      */
     public static long getWavDuration(byte[] header) {
         if (header == null || header.length < 44) {
-            Logger.e(TAG, "header size有误");
+            Log.e(TAG, "header size有误");
             return -1;
         }
         int byteRate = ByteUtils.toInt(header, 28);//28-31

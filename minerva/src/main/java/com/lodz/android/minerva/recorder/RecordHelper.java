@@ -1,21 +1,24 @@
 package com.lodz.android.minerva.recorder;
 
+import android.Manifest;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
+import androidx.annotation.RequiresPermission;
 
 import com.lodz.android.minerva.fftlib.FftFactory;
+import com.lodz.android.minerva.mp3.Mp3EncodeThread;
 import com.lodz.android.minerva.recorder.listener.RecordDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
-import com.lodz.android.minerva.mp3.Mp3EncodeThread;
 import com.lodz.android.minerva.recorder.wav.WavUtils;
 import com.lodz.android.minerva.utils.ByteUtils;
 import com.lodz.android.minerva.utils.FileUtils;
-import com.lodz.android.minerva.utils.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -93,16 +96,16 @@ public class RecordHelper {
     public void start(String filePath, RecordConfig config) {
         this.currentConfig = config;
         if (state != RecordState.IDLE && state != RecordState.STOP) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Log.e(TAG, "状态异常当前状态： " + state.name());
             return;
         }
         resultFile = new File(filePath);
         String tempFilePath = getTempFilePath();
 
-        Logger.d(TAG, "----------------开始录制 %s------------------------", currentConfig.getFormat().name());
-        Logger.d(TAG, "参数： %s", currentConfig.toString());
-        Logger.i(TAG, "pcm缓存 tmpFile: %s", tempFilePath);
-        Logger.i(TAG, "录音文件 resultFile: %s", filePath);
+        Log.d(TAG, "----------------开始录制 ------------------------"+ currentConfig.getFormat().name());
+        Log.d(TAG, "参数： "+ currentConfig.toString());
+        Log.i(TAG, "pcm缓存 tmpFile: "+ tempFilePath);
+        Log.i(TAG, "录音文件 resultFile: "+ filePath);
 
 
         tmpFile = new File(tempFilePath);
@@ -112,7 +115,7 @@ public class RecordHelper {
 
     public void stop() {
         if (state == RecordState.IDLE) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
 
@@ -129,7 +132,7 @@ public class RecordHelper {
 
     void pause() {
         if (state != RecordState.RECORDING) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
         state = RecordState.PAUSE;
@@ -138,11 +141,11 @@ public class RecordHelper {
 
     void resume() {
         if (state != RecordState.PAUSE) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
         String tempFilePath = getTempFilePath();
-        Logger.i(TAG, "tmpPCM File: %s", tempFilePath);
+        Log.i(TAG, "tmpPCM File: "+ tempFilePath);
         tmpFile = new File(tempFilePath);
         audioRecordThread = new AudioRecordThread();
         audioRecordThread.start();
@@ -167,7 +170,7 @@ public class RecordHelper {
     }
 
     private void notifyFinish() {
-        Logger.d(TAG, "录音结束 file: %s", resultFile.getAbsolutePath());
+        Log.d(TAG, "录音结束 file: "+ resultFile.getAbsolutePath());
 
         mainHandler.post(new Runnable() {
             @Override
@@ -239,7 +242,7 @@ public class RecordHelper {
             mp3EncodeThread = new Mp3EncodeThread(resultFile, bufferSize);
             mp3EncodeThread.start();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -247,17 +250,18 @@ public class RecordHelper {
         private AudioRecord audioRecord;
         private int bufferSize;
 
+        @RequiresPermission(Manifest.permission.RECORD_AUDIO)
         AudioRecordThread() {
             bufferSize = AudioRecord.getMinBufferSize(currentConfig.getSampleRate(),
                     currentConfig.getChannelConfig(), currentConfig.getEncodingConfig()) * RECORD_AUDIO_BUFFER_TIMES;
-            Logger.d(TAG, "record buffer size = %s", bufferSize);
+            Log.d(TAG, "record buffer size = "+ bufferSize);
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, currentConfig.getSampleRate(),
                     currentConfig.getChannelConfig(), currentConfig.getEncodingConfig(), bufferSize);
             if (currentConfig.getFormat() == RecordConfig.RecordFormat.MP3) {
                 if (mp3EncodeThread == null) {
                     initMp3EncoderThread(bufferSize);
                 } else {
-                    Logger.e(TAG, "mp3EncodeThread != null, 请检查代码");
+                    Log.e(TAG, "mp3EncodeThread != null, 请检查代码");
                 }
             }
         }
@@ -279,7 +283,7 @@ public class RecordHelper {
         private void startPcmRecorder() {
             state = RecordState.RECORDING;
             notifyState();
-            Logger.d(TAG, "开始录制 Pcm");
+            Log.d(TAG, "开始录制 Pcm");
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(tmpFile);
@@ -297,10 +301,10 @@ public class RecordHelper {
                 if (state == RecordState.STOP) {
                     makeFile();
                 } else {
-                    Logger.i(TAG, "暂停！");
+                    Log.i(TAG, "暂停！");
                 }
             } catch (Exception e) {
-                Logger.e(e, TAG, e.getMessage());
+                Log.e(TAG, e.getMessage());
                 notifyError("录音失败");
             } finally {
                 try {
@@ -314,7 +318,7 @@ public class RecordHelper {
             if (state != RecordState.PAUSE) {
                 state = RecordState.IDLE;
                 notifyState();
-                Logger.d(TAG, "录音结束");
+                Log.d(TAG, "录音结束");
             }
         }
 
@@ -335,7 +339,7 @@ public class RecordHelper {
                 }
                 audioRecord.stop();
             } catch (Exception e) {
-                Logger.e(e, TAG, e.getMessage());
+                Log.e(TAG, e.getMessage());
                 notifyError("录音失败");
             }
             if (state != RecordState.PAUSE) {
@@ -343,7 +347,7 @@ public class RecordHelper {
                 notifyState();
                 stopMp3Encoded();
             } else {
-                Logger.d(TAG, "暂停");
+                Log.d(TAG, "暂停");
             }
         }
     }
@@ -358,7 +362,7 @@ public class RecordHelper {
                 }
             });
         } else {
-            Logger.e(TAG, "mp3EncodeThread is null, 代码业务流程有误，请检查！！ ");
+            Log.e(TAG, "mp3EncodeThread is null, 代码业务流程有误，请检查！！ ");
         }
     }
 
@@ -377,7 +381,7 @@ public class RecordHelper {
                 break;
         }
         notifyFinish();
-        Logger.i(TAG, "录音完成！ path: %s ； 大小：%s", resultFile.getAbsoluteFile(), resultFile.length());
+        Log.i(TAG, "录音完成！ path: "+resultFile.getAbsoluteFile()+" ； 大小："+ resultFile.getAbsoluteFile()+ resultFile.length());
     }
 
     /**
@@ -429,7 +433,7 @@ public class RecordHelper {
                 inputStream.close();
             }
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
             return false;
         } finally {
             try {
@@ -457,7 +461,7 @@ public class RecordHelper {
     private String getTempFilePath() {
 //        String fileDir = String.format(Locale.getDefault(), "%s/Record/", Environment.getExternalStorageDirectory().getAbsolutePath());
 //        if (!FileUtils.createOrExistsDir(fileDir)) {
-//            Logger.e(TAG, "文件夹创建失败：%s", fileDir);
+//            Log.e(TAG, "文件夹创建失败：%s", fileDir);
 //        }
         String fileName = String.format(Locale.getDefault(), "record_tmp_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
         return String.format(Locale.getDefault(), "%s%s.pcm", resultFile, fileName);

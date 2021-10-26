@@ -3,6 +3,7 @@ package com.lodz.android.minerva;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.util.Log;
 
 import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordHelper;
@@ -12,7 +13,6 @@ import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
-import com.lodz.android.minerva.utils.Logger;
 
 /**
  * @author zhaolewei on 2018/7/10.
@@ -45,15 +45,14 @@ public class RecordManager {
      */
     public void init(Application application, boolean showLog) {
         this.context = application;
-        Logger.IsDebug = showLog;
     }
 
     public void start() {
         if (context == null) {
-            Logger.e(TAG, "未进行初始化");
+            Log.e(TAG, "未进行初始化");
             return;
         }
-        Logger.i(TAG, "start...");
+        Log.i(TAG, "start...");
         RecordService.startRecording(context);
     }
 
