@@ -16,9 +16,8 @@ import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
 import com.lodz.android.minerva.recorder.listener.RecordStateListener;
-import com.lodz.android.minerva.recorder.wav.WavUtils;
-import com.lodz.android.minerva.utils.ByteUtils;
 import com.lodz.android.minerva.utils.FileUtils;
+import com.lodz.android.minerva.wav.WavUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -93,6 +92,7 @@ public class RecordHelper {
         this.recordFftDataListener = recordFftDataListener;
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     public void start(String filePath, RecordConfig config) {
         this.currentConfig = config;
         if (state != RecordState.IDLE && state != RecordState.STOP) {
@@ -139,6 +139,7 @@ public class RecordHelper {
         notifyState();
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     void resume() {
         if (state != RecordState.PAUSE) {
             Log.e(TAG, "状态异常当前状态： "+ state.name());
@@ -335,7 +336,7 @@ public class RecordHelper {
                     if (mp3EncodeThread != null) {
                         mp3EncodeThread.addChangeBuffer(new Mp3EncodeThread.ChangeBuffer(byteBuffer, end));
                     }
-                    notifyData(ByteUtils.toBytes(byteBuffer));
+                    notifyData(toByteArray(byteBuffer));
                 }
                 audioRecord.stop();
             } catch (Exception e) {
@@ -350,6 +351,20 @@ public class RecordHelper {
                 Log.d(TAG, "暂停");
             }
         }
+    }
+
+    /**
+     * short[] 转 byte[]
+     */
+    private byte[] toByteArray(short[] src) {
+        int count = src.length;
+        byte[] dest = new byte[count << 1];
+        for (int i = 0; i < count; i++) {
+            dest[i * 2] = (byte) (src[i]);
+            dest[i * 2 + 1] = (byte) (src[i] >> 8);
+        }
+
+        return dest;
     }
 
     private void stopMp3Encoded() {

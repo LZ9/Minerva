@@ -246,7 +246,7 @@ class SimpleActivity : BaseSandwichActivity() {
     }
 
     private fun initRecord() {
-        mRecordManager.init(App.get(), true)
+        mRecordManager.init(App.get())
         updateRecordConfig()
         mRecordManager.changeRecordDir(FileManager.getContentFolderPath())
     }

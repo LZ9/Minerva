@@ -1,11 +1,14 @@
 package com.lodz.android.minerva.recorder;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.annotation.RequiresPermission;
 
 import com.lodz.android.minerva.recorder.listener.RecordDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
@@ -54,6 +57,7 @@ public class RecordService extends Service {
     }
 
     @Override
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
             return super.onStartCommand(intent, flags, startId);
@@ -168,11 +172,13 @@ public class RecordService extends Service {
         RecordHelper.getInstance().setRecordFftDataListener(recordFftDataListener);
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private void doStartRecording(String path) {
         Log.v(TAG, "doStartRecording path: "+ path);
         RecordHelper.getInstance().start(path, currentConfig);
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private void doResumeRecording() {
         Log.v(TAG, "doResumeRecording");
         RecordHelper.getInstance().resume();

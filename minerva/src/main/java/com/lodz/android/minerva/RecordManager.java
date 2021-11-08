@@ -41,9 +41,8 @@ public class RecordManager {
      * 初始化
      *
      * @param application Application
-     * @param showLog     是否开启日志
      */
-    public void init(Application application, boolean showLog) {
+    public void init(Application application) {
         this.context = application;
     }
 

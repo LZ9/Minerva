@@ -13,19 +13,19 @@ public class RecordUtils {
      * 计算公式：dB = 20 * log(a / a0);
      * @return 声音分贝值
      */
-    public static long getMaxDecibels(byte[] input) {
-        short[] amplitudes = ByteUtils.toShorts(input);
-        if (amplitudes == null) {
-            return 0;
-        }
-        float maxAmplitude = 2;
-        for (float amplitude : amplitudes) {
-            if (Math.abs(maxAmplitude) < Math.abs(amplitude)) {
-                maxAmplitude = amplitude;
-            }
-        }
-        return Math.round(20 * Math.log10(maxAmplitude));
-    }
+//    public static long getMaxDecibels(byte[] input) {
+//        short[] amplitudes = ByteUtils.toShorts(input);
+//        if (amplitudes == null) {
+//            return 0;
+//        }
+//        float maxAmplitude = 2;
+//        for (float amplitude : amplitudes) {
+//            if (Math.abs(maxAmplitude) < Math.abs(amplitude)) {
+//                maxAmplitude = amplitude;
+//            }
+//        }
+//        return Math.round(20 * Math.log10(maxAmplitude));
+//    }
 
 
     public static float[] byteToFloat(byte[] input) {
