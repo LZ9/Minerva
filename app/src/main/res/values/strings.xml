@@ -28,6 +28,7 @@
     <string name="simple_delete_all">刪除全部</string>
     <string name="simple_delete">刪除</string>
     <string name="simple_play">播放</string>
+    <string name="simple_to_wav">转wav格式</string>
     <string name="simple_config_disable">只能在空闲状态进行配置</string>
 
 </resources>

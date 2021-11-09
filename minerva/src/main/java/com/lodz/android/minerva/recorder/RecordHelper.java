@@ -406,7 +406,7 @@ public class RecordHelper {
         if (!FileUtils.isFile(resultFile) || resultFile.length() == 0) {
             return;
         }
-        byte[] header = WavUtils.generateWavFileHeader((int) resultFile.length(), currentConfig.getSampleRate(), currentConfig.getChannelCount(), currentConfig.getEncoding());
+        byte[] header = WavUtils.generateHeader((int) resultFile.length(), currentConfig.getSampleRate(), (short) currentConfig.getChannelCount(), (short) currentConfig.getEncoding());
         WavUtils.writeHeader(resultFile, header);
     }
 

@@ -7,6 +7,7 @@ import android.media.AudioFormat
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.lodz.android.minerva.RecordManager
 import com.lodz.android.minerva.recorder.RecordConfig
 import com.lodz.android.minerva.recorder.RecordHelper
 import com.lodz.android.minerva.recorder.listener.RecordStateListener
+import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.App
 import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
@@ -163,8 +165,33 @@ class SimpleActivity : BaseSandwichActivity() {
                 FileUtils.delFile(file.absolutePath)
                 updateAudioFileList()
             }
-        })
 
+            override fun onClickPcmToWav(file: File) {
+                val sampleRate = when (mSampleRate) {
+                    Constant.SAMPLE_RATE_8000 -> 8000
+                    Constant.SAMPLE_RATE_16000 -> 16000
+                    else -> 44100
+                }
+                val encoding = when (mEncoding) {
+                    Constant.ENCODING_16_BIT -> 16
+                    else -> 8
+                }
+
+                AlertDialog.Builder(getContext())
+                    .setMessage("是否按当前采样率：$sampleRate 和位宽：$encoding 来进行转换？（若转换配置和PCM录音配置不同，则转出来的wav音频会失真）")
+                    .setPositiveButton("是") { dif, which ->
+                        val header = WavUtils.generateHeader(file.length().toInt(), sampleRate, 1, encoding.toShort())
+                        WavUtils.pcmToWav(file, header)
+                        updateAudioFileList()
+                        dif.dismiss()
+                    }
+                    .setNegativeButton("否") { dif, which ->
+                        dif.dismiss()
+                    }
+                    .create()
+                    .show()
+            }
+        })
 
         mRecordManager.setRecordStateListener(object : RecordStateListener {
             override fun onStateChange(state: RecordHelper.RecordState) {
