@@ -17,7 +17,7 @@ import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minerva.RecordManager
 import com.lodz.android.minerva.recorder.RecordingFormat
 import com.lodz.android.minerva.recorder.RecordingState
-import com.lodz.android.minerva.recorder.listener.RecordStateListener
+import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener
 import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.App
 import com.lodz.android.minervademo.BuildConfig
@@ -193,7 +193,7 @@ class SimpleActivity : BaseSandwichActivity() {
             }
         })
 
-        mRecordManager.setRecordStateListener(object : RecordStateListener {
+        mRecordManager.setOnRecordingStateListener(object : OnRecordingStateListener {
             override fun onStateChange(state: RecordingState) {
                 when (state) {
                     RecordingState.PAUSE -> {// 暂停中
@@ -219,21 +219,21 @@ class SimpleActivity : BaseSandwichActivity() {
                 mBottomBinding.pauseBtn.isEnabled = mStatus == Constant.STATUS_RECORDING
             }
 
-            override fun onError(error: String?) {
-                toastShort(error ?: "未知异常")
+            override fun onError(error: String) {
+                toastShort(error)
             }
         })
 
-        mRecordManager.setRecordSoundSizeListener {
+        mRecordManager.setOnRecordingSoundSizeListener {
             mTopBinding.soundSizeTv.text = getString(R.string.simple_sound_size).append("$it db")
         }
 
-        mRecordManager.setRecordResultListener {
+        mRecordManager.setOnRecordingFinishListener {
             toastShort(it.absolutePath)
             updateAudioFileList()
         }
 
-        mRecordManager.setRecordFftDataListener {
+        mRecordManager.setOnRecordingFftDataListener {
 
         }
     }

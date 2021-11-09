@@ -10,11 +10,11 @@ import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
-import com.lodz.android.minerva.recorder.listener.RecordDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordResultListener;
-import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
-import com.lodz.android.minerva.recorder.listener.RecordStateListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFftDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFinishListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener;
 import com.lodz.android.minerva.utils.FileUtils;
 
 import java.text.SimpleDateFormat;
@@ -152,24 +152,24 @@ public class RecordService extends Service {
         return RecordHelper.getInstance().getState();
     }
 
-    public static void setRecordStateListener(RecordStateListener recordStateListener) {
-        RecordHelper.getInstance().setRecordStateListener(recordStateListener);
+    public static void setOnRecordingStateListener(OnRecordingStateListener recordStateListener) {
+        RecordHelper.getInstance().setOnRecordingStateListener(recordStateListener);
     }
 
-    public static void setRecordDataListener(RecordDataListener recordDataListener) {
-        RecordHelper.getInstance().setRecordDataListener(recordDataListener);
+    public static void setOnRecordingDataListener(OnRecordingDataListener recordDataListener) {
+        RecordHelper.getInstance().setOnRecordingDataListener(recordDataListener);
     }
 
-    public static void setRecordSoundSizeListener(RecordSoundSizeListener recordSoundSizeListener) {
-        RecordHelper.getInstance().setRecordSoundSizeListener(recordSoundSizeListener);
+    public static void setOnRecordingSoundSizeListener(OnRecordingSoundSizeListener recordSoundSizeListener) {
+        RecordHelper.getInstance().setOnRecordingSoundSizeListener(recordSoundSizeListener);
     }
 
-    public static void setRecordResultListener(RecordResultListener recordResultListener) {
-        RecordHelper.getInstance().setRecordResultListener(recordResultListener);
+    public static void setOnRecordingFinishListener(OnRecordingFinishListener recordResultListener) {
+        RecordHelper.getInstance().setOnRecordingFinishListener(recordResultListener);
     }
 
-    public static void setRecordFftDataListener(RecordFftDataListener recordFftDataListener) {
-        RecordHelper.getInstance().setRecordFftDataListener(recordFftDataListener);
+    public static void setOnRecordingFftDataListener(OnRecordingFftDataListener recordFftDataListener) {
+        RecordHelper.getInstance().setOnRecordingFftDataListener(recordFftDataListener);
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)

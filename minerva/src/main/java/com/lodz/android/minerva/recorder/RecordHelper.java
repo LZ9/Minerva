@@ -11,11 +11,11 @@ import androidx.annotation.RequiresPermission;
 
 import com.lodz.android.minerva.fftlib.FftFactory;
 import com.lodz.android.minerva.mp3.Mp3EncodeThread;
-import com.lodz.android.minerva.recorder.listener.RecordDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordResultListener;
-import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
-import com.lodz.android.minerva.recorder.listener.RecordStateListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFftDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFinishListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener;
 import com.lodz.android.minerva.utils.FileUtils;
 import com.lodz.android.minerva.wav.WavUtils;
 
@@ -40,11 +40,11 @@ public class RecordHelper {
     private volatile RecordingState state = RecordingState.IDLE;
     private static final int RECORD_AUDIO_BUFFER_TIMES = 1;
 
-    private RecordStateListener recordStateListener;
-    private RecordDataListener recordDataListener;
-    private RecordSoundSizeListener recordSoundSizeListener;
-    private RecordResultListener recordResultListener;
-    private RecordFftDataListener recordFftDataListener;
+    private OnRecordingStateListener mOnRecordingStateListener;
+    private OnRecordingDataListener mOnRecordingDataListener;
+    private OnRecordingSoundSizeListener mOnRecordingSoundSizeListener;
+    private OnRecordingFinishListener mOnRecordingFinishListener;
+    private OnRecordingFftDataListener mOnRecordingFftDataListener;
     private RecordConfig currentConfig;
     private AudioRecordThread audioRecordThread;
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -72,24 +72,24 @@ public class RecordHelper {
         return state;
     }
 
-    void setRecordStateListener(RecordStateListener recordStateListener) {
-        this.recordStateListener = recordStateListener;
+    void setOnRecordingStateListener(OnRecordingStateListener recordStateListener) {
+        this.mOnRecordingStateListener = recordStateListener;
     }
 
-    void setRecordDataListener(RecordDataListener recordDataListener) {
-        this.recordDataListener = recordDataListener;
+    void setOnRecordingDataListener(OnRecordingDataListener recordDataListener) {
+        this.mOnRecordingDataListener = recordDataListener;
     }
 
-    void setRecordSoundSizeListener(RecordSoundSizeListener recordSoundSizeListener) {
-        this.recordSoundSizeListener = recordSoundSizeListener;
+    void setOnRecordingSoundSizeListener(OnRecordingSoundSizeListener recordSoundSizeListener) {
+        this.mOnRecordingSoundSizeListener = recordSoundSizeListener;
     }
 
-    void setRecordResultListener(RecordResultListener recordResultListener) {
-        this.recordResultListener = recordResultListener;
+    void setOnRecordingFinishListener(OnRecordingFinishListener recordResultListener) {
+        this.mOnRecordingFinishListener = recordResultListener;
     }
 
-    public void setRecordFftDataListener(RecordFftDataListener recordFftDataListener) {
-        this.recordFftDataListener = recordFftDataListener;
+    public void setOnRecordingFftDataListener(OnRecordingFftDataListener recordFftDataListener) {
+        this.mOnRecordingFftDataListener = recordFftDataListener;
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
@@ -153,19 +153,19 @@ public class RecordHelper {
     }
 
     private void notifyState() {
-        if (recordStateListener == null) {
+        if (mOnRecordingStateListener == null) {
             return;
         }
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                recordStateListener.onStateChange(state);
+                mOnRecordingStateListener.onStateChange(state);
             }
         });
 
         if (state == RecordingState.STOP || state == RecordingState.PAUSE) {
-            if (recordSoundSizeListener != null) {
-                recordSoundSizeListener.onSoundSize(0);
+            if (mOnRecordingSoundSizeListener != null) {
+                mOnRecordingSoundSizeListener.onSoundSize(0);
             }
         }
     }
@@ -176,24 +176,24 @@ public class RecordHelper {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (recordStateListener != null) {
-                    recordStateListener.onStateChange(RecordingState.FINISH);
+                if (mOnRecordingStateListener != null) {
+                    mOnRecordingStateListener.onStateChange(RecordingState.FINISH);
                 }
-                if (recordResultListener != null) {
-                    recordResultListener.onResult(resultFile);
+                if (mOnRecordingFinishListener != null) {
+                    mOnRecordingFinishListener.onFinish(resultFile);
                 }
             }
         });
     }
 
     private void notifyError(final String error) {
-        if (recordStateListener == null) {
+        if (mOnRecordingStateListener == null) {
             return;
         }
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                recordStateListener.onError(error);
+                mOnRecordingStateListener.onError(error);
             }
         });
     }
@@ -201,24 +201,24 @@ public class RecordHelper {
     private FftFactory fftFactory = new FftFactory(FftFactory.Level.Original);
 
     private void notifyData(final byte[] data) {
-        if (recordDataListener == null && recordSoundSizeListener == null && recordFftDataListener == null) {
+        if (mOnRecordingDataListener == null && mOnRecordingSoundSizeListener == null && mOnRecordingFftDataListener == null) {
             return;
         }
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (recordDataListener != null) {
-                    recordDataListener.onData(data);
+                if (mOnRecordingDataListener != null) {
+                    mOnRecordingDataListener.onData(data);
                 }
 
-                if (recordFftDataListener != null || recordSoundSizeListener != null) {
+                if (mOnRecordingFftDataListener != null || mOnRecordingSoundSizeListener != null) {
                     byte[] fftData = fftFactory.makeFftData(data);
                     if (fftData != null) {
-                        if (recordSoundSizeListener != null) {
-                            recordSoundSizeListener.onSoundSize(getDb(fftData));
+                        if (mOnRecordingSoundSizeListener != null) {
+                            mOnRecordingSoundSizeListener.onSoundSize(getDb(fftData));
                         }
-                        if (recordFftDataListener != null) {
-                            recordFftDataListener.onFftData(fftData);
+                        if (mOnRecordingFftDataListener != null) {
+                            mOnRecordingFftDataListener.onFftData(fftData);
                         }
                     }
                 }

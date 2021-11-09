@@ -12,15 +12,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lodz.android.minerva.RecordManager;
 import com.lodz.android.minerva.recorder.RecordingFormat;
 import com.lodz.android.minerva.recorder.RecordingState;
-import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordResultListener;
-import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
-import com.lodz.android.minerva.recorder.listener.RecordStateListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFftDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFinishListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener;
 import com.lodz.android.minervademo.App;
 import com.lodz.android.minervademo.R;
 import com.lodz.android.minervademo.utils.FileManager;
@@ -169,7 +170,7 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void initRecordEvent() {
-        recordManager.setRecordStateListener(new RecordStateListener() {
+        recordManager.setOnRecordingStateListener(new OnRecordingStateListener() {
             @Override
             public void onStateChange(RecordingState state) {
                 Log.i(TAG, "onStateChange %s" + state.name());
@@ -201,21 +202,21 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
                 Log.i(TAG, "onError %s" + error);
             }
         });
-        recordManager.setRecordSoundSizeListener(new RecordSoundSizeListener() {
+        recordManager.setOnRecordingSoundSizeListener(new OnRecordingSoundSizeListener() {
             @Override
             public void onSoundSize(int soundSize) {
                 tvSoundSize.setText(String.format(Locale.getDefault(), "声音大小：%s db", soundSize));
             }
         });
-        recordManager.setRecordResultListener(new RecordResultListener() {
+        recordManager.setOnRecordingFinishListener(new OnRecordingFinishListener() {
             @Override
-            public void onResult(File result) {
+            public void onFinish(@NonNull File result) {
                 Toast.makeText(MainActivity2.this, "录音文件： " + result.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             }
         });
-        recordManager.setRecordFftDataListener(new RecordFftDataListener() {
+        recordManager.setOnRecordingFftDataListener(new OnRecordingFftDataListener() {
             @Override
-            public void onFftData(byte[] data) {
+            public void onFftData(@NonNull byte[] data) {
                 audioView.setWaveData(data);
             }
         });

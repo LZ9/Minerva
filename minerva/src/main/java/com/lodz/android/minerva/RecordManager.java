@@ -9,11 +9,11 @@ import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordService;
 import com.lodz.android.minerva.recorder.RecordingFormat;
 import com.lodz.android.minerva.recorder.RecordingState;
-import com.lodz.android.minerva.recorder.listener.RecordDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
-import com.lodz.android.minerva.recorder.listener.RecordResultListener;
-import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
-import com.lodz.android.minerva.recorder.listener.RecordStateListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFftDataListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingFinishListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener;
 
 /**
  * @author zhaolewei on 2018/7/10.
@@ -80,36 +80,36 @@ public class RecordManager {
     /**
      * 录音状态监听回调
      */
-    public void setRecordStateListener(RecordStateListener listener) {
-        RecordService.setRecordStateListener(listener);
+    public void setOnRecordingStateListener(OnRecordingStateListener listener) {
+        RecordService.setOnRecordingStateListener(listener);
     }
 
     /**
      * 录音数据监听回调
      */
-    public void setRecordDataListener(RecordDataListener listener) {
-        RecordService.setRecordDataListener(listener);
+    public void setOnRecordingDataListener(OnRecordingDataListener listener) {
+        RecordService.setOnRecordingDataListener(listener);
     }
 
     /**
      * 录音可视化数据回调，傅里叶转换后的频域数据
      */
-    public void setRecordFftDataListener(RecordFftDataListener recordFftDataListener) {
-        RecordService.setRecordFftDataListener(recordFftDataListener);
+    public void setOnRecordingFftDataListener(OnRecordingFftDataListener recordFftDataListener) {
+        RecordService.setOnRecordingFftDataListener(recordFftDataListener);
     }
 
     /**
      * 录音文件转换结束回调
      */
-    public void setRecordResultListener(RecordResultListener listener) {
-        RecordService.setRecordResultListener(listener);
+    public void setOnRecordingFinishListener(OnRecordingFinishListener listener) {
+        RecordService.setOnRecordingFinishListener(listener);
     }
 
     /**
      * 录音音量监听回调
      */
-    public void setRecordSoundSizeListener(RecordSoundSizeListener listener) {
-        RecordService.setRecordSoundSizeListener(listener);
+    public void setOnRecordingSoundSizeListener(OnRecordingSoundSizeListener listener) {
+        RecordService.setOnRecordingSoundSizeListener(listener);
     }
 
 
