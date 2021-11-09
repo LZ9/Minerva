@@ -15,8 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lodz.android.minerva.RecordManager;
-import com.lodz.android.minerva.recorder.RecordHelper;
 import com.lodz.android.minerva.recorder.RecordingFormat;
+import com.lodz.android.minerva.recorder.RecordingState;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
@@ -171,7 +171,7 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
     private void initRecordEvent() {
         recordManager.setRecordStateListener(new RecordStateListener() {
             @Override
-            public void onStateChange(RecordHelper.RecordState state) {
+            public void onStateChange(RecordingState state) {
                 Log.i(TAG, "onStateChange %s" + state.name());
 
                 switch (state) {

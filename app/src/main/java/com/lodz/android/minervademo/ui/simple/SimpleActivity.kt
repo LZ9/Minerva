@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.*
 import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minerva.RecordManager
-import com.lodz.android.minerva.recorder.RecordHelper
 import com.lodz.android.minerva.recorder.RecordingFormat
+import com.lodz.android.minerva.recorder.RecordingState
 import com.lodz.android.minerva.recorder.listener.RecordStateListener
 import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.App
@@ -194,21 +194,21 @@ class SimpleActivity : BaseSandwichActivity() {
         })
 
         mRecordManager.setRecordStateListener(object : RecordStateListener {
-            override fun onStateChange(state: RecordHelper.RecordState) {
+            override fun onStateChange(state: RecordingState) {
                 when (state) {
-                    RecordHelper.RecordState.PAUSE -> {// 暂停中
+                    RecordingState.PAUSE -> {// 暂停中
                         mStatus = Constant.STATUS_PAUSE
                     }
-                    RecordHelper.RecordState.IDLE -> {// 空闲中
+                    RecordingState.IDLE -> {// 空闲中
                         mStatus = Constant.STATUS_IDLE
                     }
-                    RecordHelper.RecordState.RECORDING -> {//录音中
+                    RecordingState.RECORDING -> {//录音中
                         mStatus = Constant.STATUS_RECORDING
                     }
-                    RecordHelper.RecordState.STOP -> {//停止
+                    RecordingState.STOP -> {//停止
                         mStatus = Constant.STATUS_IDLE
                     }
-                    RecordHelper.RecordState.FINISH -> {//录音结束
+                    RecordingState.FINISH -> {//录音结束
                         mStatus = Constant.STATUS_IDLE
                     }
                 }

@@ -1,7 +1,7 @@
 package com.lodz.android.minerva.recorder.listener;
 
 
-import com.lodz.android.minerva.recorder.RecordHelper;
+import com.lodz.android.minerva.recorder.RecordingState;
 
 /**
  * @author zhaolewei on 2018/7/11.
@@ -13,7 +13,7 @@ public interface RecordStateListener {
      *
      * @param state 当前状态
      */
-    void onStateChange(RecordHelper.RecordState state);
+    void onStateChange(RecordingState state);
 
     /**
      * 录音错误

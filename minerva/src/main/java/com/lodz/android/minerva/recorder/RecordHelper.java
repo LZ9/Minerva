@@ -37,7 +37,7 @@ import java.util.Locale;
 public class RecordHelper {
     private static final String TAG = RecordHelper.class.getSimpleName();
     private volatile static RecordHelper instance;
-    private volatile RecordState state = RecordState.IDLE;
+    private volatile RecordingState state = RecordingState.IDLE;
     private static final int RECORD_AUDIO_BUFFER_TIMES = 1;
 
     private RecordStateListener recordStateListener;
@@ -68,7 +68,7 @@ public class RecordHelper {
         return instance;
     }
 
-    RecordState getState() {
+    RecordingState getState() {
         return state;
     }
 
@@ -95,7 +95,7 @@ public class RecordHelper {
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     public void start(String filePath, RecordConfig config) {
         this.currentConfig = config;
-        if (state != RecordState.IDLE && state != RecordState.STOP) {
+        if (state != RecordingState.IDLE && state != RecordingState.STOP) {
             Log.e(TAG, "状态异常当前状态： " + state.name());
             return;
         }
@@ -114,34 +114,34 @@ public class RecordHelper {
     }
 
     public void stop() {
-        if (state == RecordState.IDLE) {
+        if (state == RecordingState.IDLE) {
             Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
 
-        if (state == RecordState.PAUSE) {
+        if (state == RecordingState.PAUSE) {
             makeFile();
-            state = RecordState.IDLE;
+            state = RecordingState.IDLE;
             notifyState();
             stopMp3Encoded();
         } else {
-            state = RecordState.STOP;
+            state = RecordingState.STOP;
             notifyState();
         }
     }
 
     void pause() {
-        if (state != RecordState.RECORDING) {
+        if (state != RecordingState.RECORDING) {
             Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
-        state = RecordState.PAUSE;
+        state = RecordingState.PAUSE;
         notifyState();
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     void resume() {
-        if (state != RecordState.PAUSE) {
+        if (state != RecordingState.PAUSE) {
             Log.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
@@ -163,7 +163,7 @@ public class RecordHelper {
             }
         });
 
-        if (state == RecordState.STOP || state == RecordState.PAUSE) {
+        if (state == RecordingState.STOP || state == RecordingState.PAUSE) {
             if (recordSoundSizeListener != null) {
                 recordSoundSizeListener.onSoundSize(0);
             }
@@ -177,7 +177,7 @@ public class RecordHelper {
             @Override
             public void run() {
                 if (recordStateListener != null) {
-                    recordStateListener.onStateChange(RecordState.FINISH);
+                    recordStateListener.onStateChange(RecordingState.FINISH);
                 }
                 if (recordResultListener != null) {
                     recordResultListener.onResult(resultFile);
@@ -282,7 +282,7 @@ public class RecordHelper {
         }
 
         private void startPcmRecorder() {
-            state = RecordState.RECORDING;
+            state = RecordingState.RECORDING;
             notifyState();
             Log.d(TAG, "开始录制 Pcm");
             FileOutputStream fos = null;
@@ -291,7 +291,7 @@ public class RecordHelper {
                 audioRecord.startRecording();
                 byte[] byteBuffer = new byte[bufferSize];
 
-                while (state == RecordState.RECORDING) {
+                while (state == RecordingState.RECORDING) {
                     int end = audioRecord.read(byteBuffer, 0, byteBuffer.length);
                     notifyData(byteBuffer);
                     fos.write(byteBuffer, 0, end);
@@ -299,7 +299,7 @@ public class RecordHelper {
                 }
                 audioRecord.stop();
                 files.add(tmpFile);
-                if (state == RecordState.STOP) {
+                if (state == RecordingState.STOP) {
                     makeFile();
                 } else {
                     Log.i(TAG, "暂停！");
@@ -316,22 +316,22 @@ public class RecordHelper {
                     e.printStackTrace();
                 }
             }
-            if (state != RecordState.PAUSE) {
-                state = RecordState.IDLE;
+            if (state != RecordingState.PAUSE) {
+                state = RecordingState.IDLE;
                 notifyState();
                 Log.d(TAG, "录音结束");
             }
         }
 
         private void startMp3Recorder() {
-            state = RecordState.RECORDING;
+            state = RecordingState.RECORDING;
             notifyState();
 
             try {
                 audioRecord.startRecording();
                 short[] byteBuffer = new short[bufferSize];
 
-                while (state == RecordState.RECORDING) {
+                while (state == RecordingState.RECORDING) {
                     int end = audioRecord.read(byteBuffer, 0, byteBuffer.length);
                     if (mp3EncodeThread != null) {
                         mp3EncodeThread.addChangeBuffer(new Mp3EncodeThread.ChangeBuffer(byteBuffer, end));
@@ -343,8 +343,8 @@ public class RecordHelper {
                 Log.e(TAG, e.getMessage());
                 notifyError("录音失败");
             }
-            if (state != RecordState.PAUSE) {
-                state = RecordState.IDLE;
+            if (state != RecordingState.PAUSE) {
+                state = RecordingState.IDLE;
                 notifyState();
                 stopMp3Encoded();
             } else {
@@ -480,32 +480,6 @@ public class RecordHelper {
 //        }
         String fileName = String.format(Locale.getDefault(), "record_tmp_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
         return String.format(Locale.getDefault(), "%s%s.pcm", resultFile, fileName);
-    }
-
-    /**
-     * 表示当前状态
-     */
-    public enum RecordState {
-        /**
-         * 空闲状态
-         */
-        IDLE,
-        /**
-         * 录音中
-         */
-        RECORDING,
-        /**
-         * 暂停中
-         */
-        PAUSE,
-        /**
-         * 正在停止
-         */
-        STOP,
-        /**
-         * 录音流程结束（转换结束）
-         */
-        FINISH
     }
 
 }
