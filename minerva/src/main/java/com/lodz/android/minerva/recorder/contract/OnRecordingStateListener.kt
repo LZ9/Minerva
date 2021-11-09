@@ -1,4 +1,4 @@
-package com.lodz.android.minerva.recorder.listener
+package com.lodz.android.minerva.recorder.contract
 
 import com.lodz.android.minerva.recorder.RecordingState
 

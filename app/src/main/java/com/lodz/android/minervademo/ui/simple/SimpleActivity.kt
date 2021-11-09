@@ -17,7 +17,7 @@ import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minerva.RecordManager
 import com.lodz.android.minerva.recorder.RecordingFormat
 import com.lodz.android.minerva.recorder.RecordingState
-import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener
+import com.lodz.android.minerva.recorder.contract.OnRecordingStateListener
 import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.App
 import com.lodz.android.minervademo.BuildConfig

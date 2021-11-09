@@ -1,4 +1,4 @@
-package com.lodz.android.minerva.recorder.listener
+package com.lodz.android.minerva.recorder.contract
 
 /**
  * 傅里叶转换后的录音数据流监听器

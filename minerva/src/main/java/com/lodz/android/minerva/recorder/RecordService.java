@@ -10,11 +10,11 @@ import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
-import com.lodz.android.minerva.recorder.listener.OnRecordingDataListener;
-import com.lodz.android.minerva.recorder.listener.OnRecordingFftDataListener;
-import com.lodz.android.minerva.recorder.listener.OnRecordingFinishListener;
-import com.lodz.android.minerva.recorder.listener.OnRecordingSoundSizeListener;
-import com.lodz.android.minerva.recorder.listener.OnRecordingStateListener;
+import com.lodz.android.minerva.recorder.contract.OnRecordingDataListener;
+import com.lodz.android.minerva.recorder.contract.OnRecordingFftDataListener;
+import com.lodz.android.minerva.recorder.contract.OnRecordingFinishListener;
+import com.lodz.android.minerva.recorder.contract.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.recorder.contract.OnRecordingStateListener;
 import com.lodz.android.minerva.utils.FileUtils;
 
 import java.text.SimpleDateFormat;
