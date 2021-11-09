@@ -115,7 +115,7 @@ public class RecordService extends Service {
     /**
      * 改变录音格式
      */
-    public static boolean changeFormat(RecordConfig.RecordFormat recordFormat) {
+    public static boolean changeFormat(RecordingFormat recordFormat) {
         if (getState() == RecordHelper.RecordState.IDLE) {
             currentConfig.setFormat(recordFormat);
             return true;
@@ -215,7 +215,7 @@ public class RecordService extends Service {
             return null;
         }
         String fileName = String.format(Locale.getDefault(), "record_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
-        return String.format(Locale.getDefault(), "%s%s%s", fileDir, fileName, currentConfig.getFormat().getExtension());
+        return String.format(Locale.getDefault(), "%s%s%s", fileDir, fileName, currentConfig.getFormat().getSuffix());
     }
 
 

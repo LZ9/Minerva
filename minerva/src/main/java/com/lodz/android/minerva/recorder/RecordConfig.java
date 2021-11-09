@@ -13,7 +13,7 @@ public class RecordConfig implements Serializable {
     /**
      * 录音格式 默认WAV格式
      */
-    private RecordFormat format = RecordFormat.WAV;
+    private RecordingFormat format = RecordingFormat.WAV;
     /**
      * 通道数:默认单通道
      */
@@ -39,7 +39,7 @@ public class RecordConfig implements Serializable {
     public RecordConfig() {
     }
 
-    public RecordConfig(RecordFormat format) {
+    public RecordConfig(RecordingFormat format) {
         this.format = format;
     }
 
@@ -53,7 +53,7 @@ public class RecordConfig implements Serializable {
      *                       16Bit: See {@link AudioFormat#ENCODING_PCM_16BIT},
      * @param sampleRate     采样率 hz: 8000/16000/44100
      */
-    public RecordConfig(RecordFormat format, int channelConfig, int encodingConfig, int sampleRate) {
+    public RecordConfig(RecordingFormat format, int channelConfig, int encodingConfig, int sampleRate) {
         this.format = format;
         this.channelConfig = channelConfig;
         this.encodingConfig = encodingConfig;
@@ -75,7 +75,7 @@ public class RecordConfig implements Serializable {
      * @return 采样位宽 0: error
      */
     public int getEncoding() {
-        if(format == RecordFormat.MP3){//mp3后期转换
+        if(format == RecordingFormat.MP3){//mp3后期转换
             return 16;
         }
 
@@ -120,11 +120,11 @@ public class RecordConfig implements Serializable {
 
     //get&set
 
-    public RecordFormat getFormat() {
+    public RecordingFormat getFormat() {
         return format;
     }
 
-    public RecordConfig setFormat(RecordFormat format) {
+    public RecordConfig setFormat(RecordingFormat format) {
         this.format = format;
         return this;
     }
@@ -139,7 +139,7 @@ public class RecordConfig implements Serializable {
     }
 
     public int getEncodingConfig() {
-        if(format == RecordFormat.MP3){//mp3后期转换
+        if(format == RecordingFormat.MP3){//mp3后期转换
             return AudioFormat.ENCODING_PCM_16BIT;
         }
         return encodingConfig;
@@ -163,30 +163,5 @@ public class RecordConfig implements Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "录制格式： %s,采样率：%sHz,位宽：%s bit,声道数：%s", format, sampleRate, getEncoding(), getChannelCount());
-    }
-
-    public enum RecordFormat {
-        /**
-         * mp3格式
-         */
-        MP3(".mp3"),
-        /**
-         * wav格式
-         */
-        WAV(".wav"),
-        /**
-         * pcm格式
-         */
-        PCM(".pcm");
-
-        private String extension;
-
-        public String getExtension() {
-            return extension;
-        }
-
-        RecordFormat(String extension) {
-            this.extension = extension;
-        }
     }
 }

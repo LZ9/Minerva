@@ -15,8 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lodz.android.minerva.RecordManager;
-import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordHelper;
+import com.lodz.android.minerva.recorder.RecordingFormat;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
 import com.lodz.android.minerva.recorder.listener.RecordSoundSizeListener;
@@ -110,13 +110,13 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.rbPcm:
-                        recordManager.changeFormat(RecordConfig.RecordFormat.PCM);
+                        recordManager.changeFormat(RecordingFormat.PCM);
                         break;
                     case R.id.rbMp3:
-                        recordManager.changeFormat(RecordConfig.RecordFormat.MP3);
+                        recordManager.changeFormat(RecordingFormat.MP3);
                         break;
                     case R.id.rbWav:
-                        recordManager.changeFormat(RecordConfig.RecordFormat.WAV);
+                        recordManager.changeFormat(RecordingFormat.WAV);
                         break;
                     default:
                         break;
@@ -162,7 +162,7 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
 
     private void initRecord() {
         recordManager.init(App.get());
-        recordManager.changeFormat(RecordConfig.RecordFormat.WAV);
+        recordManager.changeFormat(RecordingFormat.WAV);
         String recordDir = FileManager.getContentFolderPath();
         recordManager.changeRecordDir(recordDir);
         initRecordEvent();

@@ -8,6 +8,7 @@ import android.util.Log;
 import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordHelper;
 import com.lodz.android.minerva.recorder.RecordService;
+import com.lodz.android.minerva.recorder.RecordingFormat;
 import com.lodz.android.minerva.recorder.listener.RecordDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordFftDataListener;
 import com.lodz.android.minerva.recorder.listener.RecordResultListener;
@@ -112,7 +113,7 @@ public class RecordManager {
     }
 
 
-    public boolean changeFormat(RecordConfig.RecordFormat recordFormat) {
+    public boolean changeFormat(RecordingFormat recordFormat) {
         return RecordService.changeFormat(recordFormat);
     }
 
