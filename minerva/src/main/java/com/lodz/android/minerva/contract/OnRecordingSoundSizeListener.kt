@@ -1,4 +1,4 @@
-package com.lodz.android.minerva.recorder.contract
+package com.lodz.android.minerva.contract
 
 /**
  * 录音音量大小监听器

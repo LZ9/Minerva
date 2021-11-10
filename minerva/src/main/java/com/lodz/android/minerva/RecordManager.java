@@ -9,11 +9,11 @@ import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordService;
 import com.lodz.android.minerva.recorder.RecordingFormat;
 import com.lodz.android.minerva.recorder.RecordingState;
-import com.lodz.android.minerva.recorder.contract.OnRecordingDataListener;
-import com.lodz.android.minerva.recorder.contract.OnRecordingFftDataListener;
-import com.lodz.android.minerva.recorder.contract.OnRecordingFinishListener;
-import com.lodz.android.minerva.recorder.contract.OnRecordingSoundSizeListener;
-import com.lodz.android.minerva.recorder.contract.OnRecordingStateListener;
+import com.lodz.android.minerva.contract.OnRecordingDataListener;
+import com.lodz.android.minerva.contract.OnRecordingFftDataListener;
+import com.lodz.android.minerva.contract.OnRecordingFinishListener;
+import com.lodz.android.minerva.contract.OnRecordingSoundSizeListener;
+import com.lodz.android.minerva.contract.OnRecordingStateListener;
 
 /**
  * @author zhaolewei on 2018/7/10.
