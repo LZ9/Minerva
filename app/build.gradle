@@ -78,7 +78,7 @@ android {
 }
 
 dependencies {
-    implementation 'ink.lodz:pandora:1.8.0'
+    implementation 'ink.lodz:pandora:1.8.1'
     implementation "com.github.permissions-dispatcher:ktx:1.1.2"
 
     implementation 'com.yanzhenjie.permission:support:2.0.1'
