@@ -39,10 +39,6 @@ android {
     }
 
     // 程序在编译的时候会检查lint，有任何错误提示会停止build，我们可以关闭这个开关
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
 
     buildTypes {
 
@@ -62,6 +58,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+    namespace 'com.lodz.android.minervademo'
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
