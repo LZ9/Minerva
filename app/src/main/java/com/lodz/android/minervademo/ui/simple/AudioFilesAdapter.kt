@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.append
+import com.lodz.android.corekt.file.getFileSuffix
 import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minervademo.databinding.RvItemAudioFileBinding
-import com.lodz.android.pandora.widget.rv.recycler.BaseRecyclerViewAdapter
-import com.lodz.android.pandora.widget.rv.recycler.DataVBViewHolder
+import com.lodz.android.pandora.widget.rv.recycler.base.BaseRvAdapter
+import com.lodz.android.pandora.widget.rv.recycler.vh.DataVBViewHolder
 import java.io.File
 
 /**
@@ -16,7 +17,7 @@ import java.io.File
  * @author zhouL
  * @date 2021/10/23
  */
-class AudioFilesAdapter(context: Context) :BaseRecyclerViewAdapter<File>(context){
+class AudioFilesAdapter(context: Context) :BaseRvAdapter<File>(context){
 
     private var mListener : OnAudioFileListener? = null
 
@@ -40,7 +41,7 @@ class AudioFilesAdapter(context: Context) :BaseRecyclerViewAdapter<File>(context
             playBtn.setOnClickListener {
                 mListener?.onClickPlay(bean)
             }
-            val suffix = FileUtils.getSuffix(bean.absolutePath)
+            val suffix = bean.absolutePath.getFileSuffix()
             toWavBtn.visibility = if (suffix.lowercase() == ".pcm") View.VISIBLE else View.GONE
             toWavBtn.setOnClickListener {
                 mListener?.onClickPcmToWav(bean)
