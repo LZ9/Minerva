@@ -3,6 +3,8 @@ package com.lodz.android.minerva.recorder;
 import android.media.AudioFormat;
 import android.os.Environment;
 
+import com.lodz.android.minerva.bean.AudioFormats;
+
 import java.io.Serializable;
 import java.util.Locale;
 
@@ -13,7 +15,7 @@ public class RecordConfig implements Serializable {
     /**
      * 录音格式 默认WAV格式
      */
-    private RecordingFormat format = RecordingFormat.WAV;
+    private AudioFormats format = AudioFormats.WAV;
     /**
      * 通道数:默认单通道
      */
@@ -39,7 +41,7 @@ public class RecordConfig implements Serializable {
     public RecordConfig() {
     }
 
-    public RecordConfig(RecordingFormat format) {
+    public RecordConfig(AudioFormats format) {
         this.format = format;
     }
 
@@ -53,7 +55,7 @@ public class RecordConfig implements Serializable {
      *                       16Bit: See {@link AudioFormat#ENCODING_PCM_16BIT},
      * @param sampleRate     采样率 hz: 8000/16000/44100
      */
-    public RecordConfig(RecordingFormat format, int channelConfig, int encodingConfig, int sampleRate) {
+    public RecordConfig(AudioFormats format, int channelConfig, int encodingConfig, int sampleRate) {
         this.format = format;
         this.channelConfig = channelConfig;
         this.encodingConfig = encodingConfig;
@@ -75,7 +77,7 @@ public class RecordConfig implements Serializable {
      * @return 采样位宽 0: error
      */
     public int getEncoding() {
-        if(format == RecordingFormat.MP3){//mp3后期转换
+        if(format == AudioFormats.MP3){//mp3后期转换
             return 16;
         }
 
@@ -120,11 +122,11 @@ public class RecordConfig implements Serializable {
 
     //get&set
 
-    public RecordingFormat getFormat() {
+    public AudioFormats getFormat() {
         return format;
     }
 
-    public RecordConfig setFormat(RecordingFormat format) {
+    public RecordConfig setFormat(AudioFormats format) {
         this.format = format;
         return this;
     }
@@ -139,7 +141,7 @@ public class RecordConfig implements Serializable {
     }
 
     public int getEncodingConfig() {
-        if(format == RecordingFormat.MP3){//mp3后期转换
+        if(format == AudioFormats.MP3){//mp3后期转换
             return AudioFormat.ENCODING_PCM_16BIT;
         }
         return encodingConfig;

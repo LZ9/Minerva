@@ -1,6 +1,6 @@
 package com.lodz.android.minerva.wav
 
-import com.lodz.android.minerva.recorder.RecordingFormat
+import com.lodz.android.minerva.bean.AudioFormats
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -46,10 +46,10 @@ object WavUtils {
         if (index != -1) {//存在后缀
             subffix = path.substring(index)
         }
-        if (subffix.lowercase().equals(RecordingFormat.WAV.suffix)){
+        if (subffix.lowercase().equals(AudioFormats.WAV.suffix)){
             return
         }
-        val newPath = path.substring(0, index) + RecordingFormat.WAV.suffix
+        val newPath = path.substring(0, index) + AudioFormats.WAV.suffix
         file.renameTo(File(newPath))
     }
 

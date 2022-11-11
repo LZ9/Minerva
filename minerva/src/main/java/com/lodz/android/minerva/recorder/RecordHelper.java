@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
+import com.lodz.android.minerva.bean.AudioFormats;
 import com.lodz.android.minerva.fftlib.FftFactory;
 import com.lodz.android.minerva.mp3.Mp3EncodeThread;
 import com.lodz.android.minerva.contract.OnRecordingDataListener;
@@ -253,12 +254,11 @@ public class RecordHelper {
 
         @RequiresPermission(Manifest.permission.RECORD_AUDIO)
         AudioRecordThread() {
-            bufferSize = AudioRecord.getMinBufferSize(currentConfig.getSampleRate(),
-                    currentConfig.getChannelConfig(), currentConfig.getEncodingConfig()) * RECORD_AUDIO_BUFFER_TIMES;
+            bufferSize = AudioRecord.getMinBufferSize(currentConfig.getSampleRate(), currentConfig.getChannelConfig(), currentConfig.getEncodingConfig()) * RECORD_AUDIO_BUFFER_TIMES;
             Log.d(TAG, "record buffer size = "+ bufferSize);
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, currentConfig.getSampleRate(),
                     currentConfig.getChannelConfig(), currentConfig.getEncodingConfig(), bufferSize);
-            if (currentConfig.getFormat() == RecordingFormat.MP3) {
+            if (currentConfig.getFormat() == AudioFormats.MP3) {
                 if (mp3EncodeThread == null) {
                     initMp3EncoderThread(bufferSize);
                 } else {

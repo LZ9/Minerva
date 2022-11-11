@@ -4,7 +4,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.util.Log;
 
-import com.lodz.android.minerva.recorder.RecordingFormat;
+import com.lodz.android.minerva.bean.AudioFormats;
 import com.lodz.android.minerva.utils.FileUtils;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class Mp3Utils {
         if (!FileUtils.isFileExists(mp3FilePath)) {
             return 0;
         }
-        if (!mp3FilePath.endsWith(RecordingFormat.MP3.getSuffix())) {
+        if (!mp3FilePath.endsWith(AudioFormats.MP3.getSuffix())) {
             return 0;
         }
         MediaExtractor mex = null;

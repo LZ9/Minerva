@@ -1,11 +1,11 @@
 package com.lodz.android.minerva.contract
 
 import android.content.Context
-import com.lodz.android.minerva.recorder.RecordingFormat
-import com.lodz.android.minerva.recorder.RecordingState
+import com.lodz.android.minerva.bean.AudioFormats
+import com.lodz.android.minerva.bean.states.RecordingStates
 
 /**
- * 录音控制
+ * 录音控制器
  * @author zhouL
  * @date 2021/11/10
  */
@@ -18,8 +18,17 @@ interface Minerva {
         channel: Int,
         encoding: Int,
         dirPath: String,
-        format: RecordingFormat
+        format: AudioFormats
     )
+
+    /** 改变采样率[sampleRate] */
+    fun changeSampleRate(sampleRate: Int)
+
+    /** 改变位宽编码[encoding] */
+    fun changeEncoding(encoding: Int)
+
+    /** 改变音频格式[format] */
+    fun changeAudioFormat(format: AudioFormats)
 
     /** 启动 */
     fun start()
@@ -30,22 +39,13 @@ interface Minerva {
     /** 暂停 */
     fun pause()
 
+    /** 暂停后恢复 */
+    fun resume()
+
     /** 设置录音状态监听器[listener] */
-    fun setOnRecordingStateListener(listener: OnRecordingStateListener?)
-
-    /** 设置录音数据流监听器[listener] */
-    fun setOnRecordingDataListener(listener: OnRecordingDataListener?)
-
-    /** 设置傅里叶转换后的录音数据流监听器[listener] */
-    fun setOnRecordingFftDataListener(listener: OnRecordingFftDataListener?)
-
-    /** 设置录音结束监听器[listener] */
-    fun setOnRecordingFinishListener(listener: OnRecordingFinishListener?)
-
-    /** 设置录音音量大小监听器[listener] */
-    fun setOnRecordingSoundSizeListener(listener: OnRecordingSoundSizeListener?)
+    fun setOnRecordingStatesListener(listener: OnRecordingStatesListener?)
 
     /** 获取当前录音状态 */
-    fun getRecordingState(): RecordingState
+    fun getRecordingState(): RecordingStates
 
 }

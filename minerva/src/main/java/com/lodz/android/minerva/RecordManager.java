@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.lodz.android.minerva.recorder.RecordConfig;
 import com.lodz.android.minerva.recorder.RecordService;
-import com.lodz.android.minerva.recorder.RecordingFormat;
+import com.lodz.android.minerva.bean.AudioFormats;
 import com.lodz.android.minerva.recorder.RecordingState;
 import com.lodz.android.minerva.contract.OnRecordingDataListener;
 import com.lodz.android.minerva.contract.OnRecordingFftDataListener;
@@ -113,7 +113,7 @@ public class RecordManager {
     }
 
 
-    public boolean changeFormat(RecordingFormat recordFormat) {
+    public boolean changeFormat(AudioFormats recordFormat) {
         return RecordService.changeFormat(recordFormat);
     }
 

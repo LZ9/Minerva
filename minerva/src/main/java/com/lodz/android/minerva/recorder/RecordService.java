@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
+import com.lodz.android.minerva.bean.AudioFormats;
 import com.lodz.android.minerva.contract.OnRecordingDataListener;
 import com.lodz.android.minerva.contract.OnRecordingFftDataListener;
 import com.lodz.android.minerva.contract.OnRecordingFinishListener;
@@ -115,7 +116,7 @@ public class RecordService extends Service {
     /**
      * 改变录音格式
      */
-    public static boolean changeFormat(RecordingFormat recordFormat) {
+    public static boolean changeFormat(AudioFormats recordFormat) {
         if (getState() == RecordingState.IDLE) {
             currentConfig.setFormat(recordFormat);
             return true;

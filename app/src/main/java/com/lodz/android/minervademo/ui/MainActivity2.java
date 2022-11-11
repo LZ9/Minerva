@@ -2,7 +2,6 @@ package com.lodz.android.minervademo.ui;
 
 import android.media.AudioFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,12 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lodz.android.minerva.RecordManager;
-import com.lodz.android.minerva.recorder.RecordingFormat;
-import com.lodz.android.minerva.recorder.RecordingState;
+import com.lodz.android.minerva.bean.AudioFormats;
 import com.lodz.android.minerva.contract.OnRecordingFftDataListener;
 import com.lodz.android.minerva.contract.OnRecordingFinishListener;
 import com.lodz.android.minerva.contract.OnRecordingSoundSizeListener;
-import com.lodz.android.minerva.contract.OnRecordingStateListener;
 import com.lodz.android.minervademo.App;
 import com.lodz.android.minervademo.R;
 import com.lodz.android.minervademo.utils.FileManager;
@@ -111,13 +108,13 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.rbPcm:
-                        recordManager.changeFormat(RecordingFormat.PCM);
+                        recordManager.changeFormat(AudioFormats.PCM);
                         break;
                     case R.id.rbMp3:
-                        recordManager.changeFormat(RecordingFormat.MP3);
+                        recordManager.changeFormat(AudioFormats.MP3);
                         break;
                     case R.id.rbWav:
-                        recordManager.changeFormat(RecordingFormat.WAV);
+                        recordManager.changeFormat(AudioFormats.WAV);
                         break;
                     default:
                         break;
@@ -163,45 +160,45 @@ public class MainActivity2  extends AppCompatActivity implements AdapterView.OnI
 
     private void initRecord() {
         recordManager.init(App.get());
-        recordManager.changeFormat(RecordingFormat.WAV);
+        recordManager.changeFormat(AudioFormats.WAV);
         String recordDir = FileManager.getContentFolderPath();
         recordManager.changeRecordDir(recordDir);
         initRecordEvent();
     }
 
     private void initRecordEvent() {
-        recordManager.setOnRecordingStateListener(new OnRecordingStateListener() {
-            @Override
-            public void onStateChange(RecordingState state) {
-                Log.i(TAG, "onStateChange %s" + state.name());
-
-                switch (state) {
-                    case PAUSE:
-                        tvState.setText("暂停中");
-                        break;
-                    case IDLE:
-                        tvState.setText("空闲中");
-                        break;
-                    case RECORDING:
-                        tvState.setText("录音中");
-                        break;
-                    case STOP:
-                        tvState.setText("停止");
-                        break;
-                    case FINISH:
-                        tvState.setText("录音结束");
-                        tvSoundSize.setText("---");
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.i(TAG, "onError %s" + error);
-            }
-        });
+//        recordManager.setOnRecordingStateListener(new OnRecordingStateListener() {
+//            @Override
+//            public void onStateChange(RecordingState state) {
+//                Log.i(TAG, "onStateChange %s" + state.name());
+//
+//                switch (state) {
+//                    case PAUSE:
+//                        tvState.setText("暂停中");
+//                        break;
+//                    case IDLE:
+//                        tvState.setText("空闲中");
+//                        break;
+//                    case RECORDING:
+//                        tvState.setText("录音中");
+//                        break;
+//                    case STOP:
+//                        tvState.setText("停止");
+//                        break;
+//                    case FINISH:
+//                        tvState.setText("录音结束");
+//                        tvSoundSize.setText("---");
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Log.i(TAG, "onError %s" + error);
+//            }
+//        });
         recordManager.setOnRecordingSoundSizeListener(new OnRecordingSoundSizeListener() {
             @Override
             public void onSoundSize(int soundSize) {

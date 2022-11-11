@@ -1,6 +1,7 @@
 package com.lodz.android.minervademo.ui
 
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -83,7 +84,7 @@ class MainActivity :BaseActivity(){
         }
 
         mBinding.vadBtn.setOnClickListener {
-
+            //https://github.com/gkonovalov/android-vad
         }
     }
 

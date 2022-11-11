@@ -20,5 +20,5 @@ enum class RecordingState {
     STOP,
 
     /** 录音流程结束（转换结束） */
-    FINISH
+    FINISH,
 }

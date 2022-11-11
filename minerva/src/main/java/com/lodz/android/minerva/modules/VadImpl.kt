@@ -2,9 +2,10 @@ package com.lodz.android.minerva.modules
 
 import android.content.Context
 import android.media.AudioFormat
+import com.lodz.android.minerva.bean.AudioFormats
+import com.lodz.android.minerva.bean.states.Idle
+import com.lodz.android.minerva.bean.states.RecordingStates
 import com.lodz.android.minerva.contract.*
-import com.lodz.android.minerva.recorder.RecordingFormat
-import com.lodz.android.minerva.recorder.RecordingState
 
 /**
  * 端点检测实现
@@ -24,21 +25,13 @@ class VadImpl : Minerva {
     /** 保存音频文件夹路径 */
     private var mSaveDirPath = ""
     /** 保存音频格式 */
-    private var mRecordingFormat = RecordingFormat.PCM
+    private var mRecordingFormat = AudioFormats.PCM
 
     /** 录音状态监听器 */
-    private var mOnRecordingStateListener: OnRecordingStateListener? = null
-    /** 录音数据流监听器 */
-    private var mOnRecordingDataListener: OnRecordingDataListener? = null
-    /** 傅里叶转换后的录音数据流监听器 */
-    private var mOnRecordingFftDataListener: OnRecordingFftDataListener? = null
-    /** 录音结束监听器 */
-    private var mOnRecordingFinishListener: OnRecordingFinishListener? = null
-    /** 录音音量大小监听器 */
-    private var mOnRecordingSoundSizeListener: OnRecordingSoundSizeListener? = null
+    private var mOnRecordingStatesListener: OnRecordingStatesListener? = null
 
     /** 当前录音状态 */
-    private var mRecordingState = RecordingState.IDLE
+    private var mRecordingState: RecordingStates = Idle
 
     override fun init(
         context: Context,
@@ -46,13 +39,25 @@ class VadImpl : Minerva {
         channel: Int,
         encoding: Int,
         dirPath: String,
-        format: RecordingFormat
+        format: AudioFormats
     ) {
         mContext = context
         mSampleRate = sampleRate
         mChannel = channel
         mEncoding = encoding
         mSaveDirPath = dirPath
+        mRecordingFormat = format
+    }
+
+    override fun changeSampleRate(sampleRate: Int) {
+        mSampleRate = sampleRate
+    }
+
+    override fun changeEncoding(encoding: Int) {
+        mEncoding = encoding
+    }
+
+    override fun changeAudioFormat(format: AudioFormats) {
         mRecordingFormat = format
     }
 
@@ -68,25 +73,14 @@ class VadImpl : Minerva {
 
     }
 
-    override fun setOnRecordingStateListener(listener: OnRecordingStateListener?) {
-        mOnRecordingStateListener = listener
+    override fun resume() {
+
     }
 
-    override fun setOnRecordingDataListener(listener: OnRecordingDataListener?) {
-        mOnRecordingDataListener = listener
+    override fun setOnRecordingStatesListener(listener: OnRecordingStatesListener?) {
+        mOnRecordingStatesListener= listener
     }
 
-    override fun setOnRecordingFftDataListener(listener: OnRecordingFftDataListener?) {
-        mOnRecordingFftDataListener = listener
-    }
 
-    override fun setOnRecordingFinishListener(listener: OnRecordingFinishListener?) {
-        mOnRecordingFinishListener = listener
-    }
-
-    override fun setOnRecordingSoundSizeListener(listener: OnRecordingSoundSizeListener?) {
-        mOnRecordingSoundSizeListener = listener
-    }
-
-    override fun getRecordingState(): RecordingState = mRecordingState
+    override fun getRecordingState(): RecordingStates = mRecordingState
 }
