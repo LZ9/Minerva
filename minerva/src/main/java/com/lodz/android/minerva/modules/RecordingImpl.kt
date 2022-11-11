@@ -113,7 +113,7 @@ class RecordingImpl : Minerva {
         val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channel, encoding)
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
         val byteBuffer = ByteArray(bufferSize)
-        mRecordingState = Recording(0, byteBuffer)
+        mRecordingState = Recording(0.0, byteBuffer)
         notifyStates(mRecordingState)
         FileOutputStream(tempFile).use {
             try {
@@ -122,10 +122,11 @@ class RecordingImpl : Minerva {
                     val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
                     it.write(byteBuffer, 0, end)
                     it.flush()
-                    notifyStates(Recording(RecordUtils.getDb(byteBuffer), byteBuffer))
+                    notifyStates(Recording(RecordUtils.getDb(byteBuffer, end), byteBuffer))
                 }
-                notifyStates(Recording(0, null))
+                notifyStates(Recording(0.0, null))
                 audioRecord.stop()
+                audioRecord.release()
             } catch (e: Exception) {
                 e.printStackTrace()
                 mRecordingState = Idle
@@ -203,7 +204,7 @@ class RecordingImpl : Minerva {
             mRecordingState = Idle
             return
         }
-        val header = WavUtils.generateHeader(file.length().toInt(), mSampleRate, mChannel.toShort(), mEncoding.toShort())
+        val header = WavUtils.generateHeader(file.length().toInt(), mSampleRate, getChannel(), getEncoding())
         WavUtils.writeHeader(file, header)
     }
 
@@ -241,4 +242,15 @@ class RecordingImpl : Minerva {
         MainScope().launch { mOnRecordingStatesListener?.onStateChange(state) }
     }
 
+    private fun getChannel(): Short = when (mChannel) {
+        AudioFormat.CHANNEL_IN_MONO -> 1
+        AudioFormat.CHANNEL_IN_STEREO -> 2
+        else -> 0
+    }
+
+    private fun getEncoding(): Short = when (mEncoding) {
+        AudioFormat.ENCODING_PCM_8BIT -> 8
+        AudioFormat.ENCODING_PCM_16BIT -> 16
+        else -> 0
+    }
 }

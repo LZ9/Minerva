@@ -5,4 +5,4 @@ package com.lodz.android.minerva.bean.states
  * @author zhouL
  * @date 2022/11/10
  */
-data class Recording(val db: Int, val data: ByteArray?) : RecordingStates()
+data class Recording(val db: Double, val data: ByteArray?) : RecordingStates()

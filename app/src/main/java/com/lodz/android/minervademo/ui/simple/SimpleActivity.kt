@@ -91,6 +91,7 @@ class SimpleActivity : BaseSandwichActivity() {
             .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
         mTopBinding.savePathTv.text = getString(R.string.simple_save_path).append(FileManager.getContentFolderPath())
         mBottomBinding.startBtn.isEnabled = true
+        mTopBinding.deleteAllBtn.isEnabled = true
         mBottomBinding.pauseBtn.isEnabled = false
     }
 
@@ -268,6 +269,7 @@ class SimpleActivity : BaseSandwichActivity() {
                 mTopBinding.statusTv.text = getString(R.string.simple_status)
                     .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
                 mBottomBinding.startBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
+                mTopBinding.deleteAllBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
                 mBottomBinding.pauseBtn.isEnabled = mStatus == Constant.STATUS_RECORDING
             }
             .build(getContext())
