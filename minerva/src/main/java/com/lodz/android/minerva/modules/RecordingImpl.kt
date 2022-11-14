@@ -122,7 +122,8 @@ class RecordingImpl : Minerva {
                     val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
                     it.write(byteBuffer, 0, end)
                     it.flush()
-                    notifyStates(Recording(RecordUtils.getDb(byteBuffer, end), byteBuffer))
+                    val db = if (getEncoding().toInt() == 8) -1.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
+                    notifyStates(Recording(db, byteBuffer))
                 }
                 notifyStates(Recording(0.0, null))
                 audioRecord.stop()

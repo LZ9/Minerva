@@ -9,7 +9,6 @@ import java.nio.ByteOrder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.log10
-import kotlin.math.min
 
 /**
  * 录音工具类
@@ -39,8 +38,8 @@ object RecordUtils {
         return ""
     }
 
-    /** 获取录音[data]音量（分贝） */
-    fun getDb(data: ByteArray, end: Int): Double {
+    /** 获取16位宽的录音[data]音量（分贝） */
+    fun getDbFor16Bit(data: ByteArray, end: Int): Double {
         val r = if (end < 128) 128 else end
         var sum = 0.0
         val buffer = bytesToShort(data)
@@ -48,9 +47,7 @@ object RecordUtils {
             sum += buffer[i] * buffer[i]
         }
         val mean = sum / r
-        val value = if (mean == 0.0) 0.0 else 10 * log10(mean)
-        Log.e(RecordingImpl.TAG, "r = $r ; sum = $sum ; mean = $mean ; value = $value")
-        return value
+        return if (mean == 0.0) 0.0 else 10 * log10(mean)
     }
 
     /** 将ByteArray转为ShortArray */
@@ -58,19 +55,6 @@ object RecordUtils {
         val shorts = ShortArray(data.size / 2)
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts)
         return shorts
-    }
-
-    /** 获取录音[data]音量（分贝） */
-    fun getDb(data: ByteArray): Int {
-        var sum = 0.0
-        var ave = 0.0
-        val length = min(data.size, 128)
-        val offsetStart = 0
-        for (i in offsetStart until length) {
-            sum += data[i] * data[i]
-        }
-        ave = sum / (length - offsetStart)
-        return (Math.log10(ave) * 20).toInt()
     }
 
     /** 获取傅里叶转换后的录音数据流 */
