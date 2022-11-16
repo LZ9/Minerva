@@ -7,4 +7,4 @@ import java.io.File
  * @author zhouL
  * @date 2022/11/10
  */
-data class Finish(val file: File) : RecordingStates()
+class Finish(val file: File) : RecordingStates()

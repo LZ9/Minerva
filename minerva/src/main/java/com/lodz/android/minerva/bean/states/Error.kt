@@ -5,4 +5,4 @@ package com.lodz.android.minerva.bean.states
  * @author zhouL
  * @date 2022/11/10
  */
-data class Error(val t: Throwable, val msg: String) : RecordingStates()
+class Error(val t: Throwable, val msg: String) : RecordingStates()
