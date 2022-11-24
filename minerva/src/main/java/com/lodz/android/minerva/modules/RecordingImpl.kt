@@ -1,11 +1,12 @@
 package com.lodz.android.minerva.modules
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.*
 import com.lodz.android.minerva.contract.*
@@ -19,7 +20,6 @@ import java.io.*
  * @author zhouL
  * @date 2021/11/10
  */
-@SuppressLint("MissingPermission")
 class RecordingImpl : Minerva {
 
     companion object {
@@ -48,8 +48,6 @@ class RecordingImpl : Minerva {
 
     /** 合并后的最终录音文件 */
     private var mResultFile: File? = null
-    /** 临时录音文件 */
-    private var mTempFile: File? = null
     /** 多段录音文件列表 */
     private var mFiles = ArrayList<File>()
 
@@ -81,10 +79,11 @@ class RecordingImpl : Minerva {
         mRecordingFormat = format
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun start() {
         if (mRecordingState !is Idle) {
-            Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 不为空闲")
-            return
+            Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 重置为空闲")
+            mRecordingState = Idle
         }
         val resultPath = mSaveDirPath + RecordUtils.getRecordFileName(mRecordingFormat)
         val tempPath = mSaveDirPath + RecordUtils.getRecordFileName(AudioFormats.PCM)
@@ -94,7 +93,6 @@ class RecordingImpl : Minerva {
         Log.d(TAG, "PCM临时文件路径：$tempPath")
         mResultFile = File(resultPath)
         val tempFile = File(tempPath)
-        mTempFile = tempFile
 
         if (mRecordingFormat == AudioFormats.MP3) {
             startMp3Recorder()
@@ -109,11 +107,12 @@ class RecordingImpl : Minerva {
     }
 
     /** 录音成PCM文件 */
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private fun startPcmRecorder(tempFile: File, sampleRate: Int, channel: Int, encoding: Int) = MainScope().launch(Dispatchers.IO) {
         val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channel, encoding)
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
         val byteBuffer = ByteArray(bufferSize)
-        mRecordingState = Recording(0.0, byteBuffer)
+        mRecordingState = Recording(0.0, null)
         notifyStates(mRecordingState)
         FileOutputStream(tempFile).use {
             try {
@@ -122,7 +121,7 @@ class RecordingImpl : Minerva {
                     val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
                     it.write(byteBuffer, 0, end)
                     it.flush()
-                    val db = if (getEncoding().toInt() == 8) -1.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
+                    val db = if (getEncoding().toInt() == 8) 0.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
                     notifyStates(Recording(db, byteBuffer))
                 }
                 notifyStates(Recording(0.0, null))
@@ -132,6 +131,7 @@ class RecordingImpl : Minerva {
                 e.printStackTrace()
                 mRecordingState = Idle
                 notifyStates(Error(e, "录音发生异常"))
+                return@launch
             }
         }
         mFiles.add(tempFile)//把临时PCM文件缓存起来
@@ -162,6 +162,7 @@ class RecordingImpl : Minerva {
         mRecordingState = Pause
     }
 
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun resume() {
         if (mRecordingState !is Pause){
             Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 不为暂停")
@@ -169,7 +170,6 @@ class RecordingImpl : Minerva {
         }
         val tempPath = mSaveDirPath + RecordUtils.getRecordFileName(AudioFormats.PCM)
         val tempFile = File(tempPath)
-        mTempFile = tempFile
 
         if (mRecordingFormat == AudioFormats.MP3) {
             startMp3Recorder()

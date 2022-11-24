@@ -13,7 +13,6 @@ import java.io.*
  * @author zhouL
  * @date 2021/11/10
  */
-@SuppressLint("MissingPermission")
 class RecordingServiceImpl : Minerva {
     override fun init(
         context: Context,
