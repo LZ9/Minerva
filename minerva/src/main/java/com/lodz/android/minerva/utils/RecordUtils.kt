@@ -20,6 +20,10 @@ object RecordUtils {
     fun getRecordFileName(formats: AudioFormats) =
         "record_${getCurrentFormatString("yyyyMMdd_HHmmss")}${formats.suffix}"
 
+    /** 获取录音文件名 */
+    fun getRecordTempFileName(formats: AudioFormats) =
+        "record_${getCurrentFormatString("yyyyMMdd_HHmmss")}_temp${formats.suffix}"
+
     /** 格式化[formatType]当前时间 */
     fun getCurrentFormatString(formatType: String): String = getFormatString(formatType, Date(System.currentTimeMillis()))
 

@@ -1,6 +1,5 @@
 package com.lodz.android.minerva.utils
 
-import com.lodz.android.minerva.fftlib.ByteUtils
 import kotlin.experimental.and
 import kotlin.experimental.or
 
@@ -18,6 +17,18 @@ object ByteUtil {
         for (i in 0 until count) {
             dest[i] = ((src[i *2] and  0xff.toByte()) or ((src[2*i + 1] and 0xff.toByte()).toInt() shl 8).toByte()).toShort()
         }
+        return dest
+    }
+
+    /** short数组转byte数组 */
+    fun toBytes(src: ShortArray): ByteArray {
+        val count = src.size
+        val dest = ByteArray(count shl 1)
+        for (i in 0 until count) {
+            dest[i * 2] = src[i].toByte()
+            dest[i * 2 + 1] = (src[i].toInt() shr 8).toByte()
+        }
+
         return dest
     }
 
