@@ -170,7 +170,7 @@ class RecordingImpl : Minerva {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
             val encodedSize = Mp3Encoder.encode(byteBuffer, byteBuffer, end, mp3Buffer)
             fos.write(mp3Buffer, 0, encodedSize)
-            val db = if (getEncoding().toInt() == 8) 0.0 else RecordUtils.getDbFor16Bit(ByteUtil.toBytes(byteBuffer), end)
+            val db = if (getEncoding().toInt() == 8) 0.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
             notifyStates(Recording(db, ByteUtil.toBytes(byteBuffer)))
         }
         notifyStates(Recording(0.0, null))

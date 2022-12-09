@@ -42,16 +42,18 @@ object RecordUtils {
     }
 
     /** 获取16位宽的录音[data]音量（分贝） */
-    fun getDbFor16Bit(data: ByteArray, end: Int): Double {
+    fun getDbFor16Bit(data: ShortArray, end: Int): Double {
         val r = if (end < 128) 128 else end
         var sum = 0.0
-        val buffer = bytesToShort(data)
-        for (i in buffer.indices) {
-            sum += buffer[i] * buffer[i]
+        for (i in data.indices) {
+            sum += data[i] * data[i]
         }
         val mean = abs(sum / r)
         return if (mean <= 0.0) 0.0 else 10 * log10(mean)
     }
+
+    /** 获取16位宽的录音[data]音量（分贝） */
+    fun getDbFor16Bit(data: ByteArray, end: Int): Double = getDbFor16Bit(bytesToShort(data), end)
 
     /** 将ByteArray转为ShortArray */
     fun bytesToShort(data: ByteArray): ShortArray {
