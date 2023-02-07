@@ -109,7 +109,7 @@ class RecordingImpl : Minerva {
     private fun startRecorder(tempFile: File, sampleRate: Int, channel: Int, encoding: Int, format: AudioFormats) = MainScope().launch(Dispatchers.IO) {
         val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channel, encoding)
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
-        mRecordingState = Recording(0.0, null)
+        mRecordingState = Recording(null, -1)
         notifyStates(mRecordingState)
         FileOutputStream(tempFile).use {
             try {
@@ -153,10 +153,9 @@ class RecordingImpl : Minerva {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
             fos.write(byteBuffer, 0, end)
             fos.flush()
-            val db = if (getEncoding().toInt() == 8) 0.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
-            notifyStates(Recording(db, byteBuffer))
+            notifyStates(Recording(byteBuffer, end))
         }
-        notifyStates(Recording(0.0, null))
+        notifyStates(Recording(null, -1))
         audioRecord.stop()
         audioRecord.release()
     }
@@ -170,10 +169,9 @@ class RecordingImpl : Minerva {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
             val encodedSize = Mp3Encoder.encode(byteBuffer, byteBuffer, end, mp3Buffer)
             fos.write(mp3Buffer, 0, encodedSize)
-            val db = if (getEncoding().toInt() == 8) 0.0 else RecordUtils.getDbFor16Bit(byteBuffer, end)
-            notifyStates(Recording(db, ByteUtil.toBytes(byteBuffer)))
+            notifyStates(Recording(ByteUtil.toBytes(byteBuffer), end))
         }
-        notifyStates(Recording(0.0, null))
+        notifyStates(Recording(null, -1))
         audioRecord.stop()
         audioRecord.release()
         if (mRecordingState is Stop) {

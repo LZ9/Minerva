@@ -5,7 +5,4 @@ package com.lodz.android.minerva.bean.states
  * @author zhouL
  * @date 2022/11/10
  */
-class Recording(
-    val db: Double, // 仅支持16Bit
-    val data: ByteArray?
-) : RecordingStates()
+class Recording(val data: ByteArray?, val end: Int) : RecordingStates()

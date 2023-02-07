@@ -15,10 +15,9 @@ import com.lodz.android.corekt.anko.*
 import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minerva.MinervaAgent
 import com.lodz.android.minerva.contract.Minerva
-import com.lodz.android.minerva.recorder.RecordingState
-import com.lodz.android.minerva.contract.OnRecordingStateListener
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.*
+import com.lodz.android.minerva.utils.RecordUtils
 import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
@@ -243,7 +242,14 @@ class SimpleActivity : BaseSandwichActivity() {
                     }
                     is Recording -> {
                         mStatus = Constant.STATUS_RECORDING
-                        mTopBinding.soundSizeTv.text = getString(R.string.simple_sound_size).append("${it.db} db")
+                        val tips = if (mEncoding == Constant.ENCODING_16_BIT) {
+                            val data = it.data
+                            val db = if (data == null) 0 else RecordUtils.getDbFor16Bit(data, it.end)
+                            "$db db"
+                        } else {
+                            "非16bit位宽，暂无解析"
+                        }
+                        mTopBinding.soundSizeTv.text = getString(R.string.simple_sound_size).append(tips)
                         Log.d("testtag", "录音中")
                     }
                     is Pause -> {
