@@ -271,6 +271,7 @@ class SimpleActivity : BaseSandwichActivity() {
                         toastShort("${it.msg} , ${it.t}")
                         Log.e("testtag", "异常")
                     }
+                    else -> {}
                 }
                 mTopBinding.statusTv.text = getString(R.string.simple_status)
                     .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")

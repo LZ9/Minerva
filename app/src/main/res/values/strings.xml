@@ -31,4 +31,6 @@
     <string name="simple_to_wav">转wav格式</string>
     <string name="simple_config_disable">只能在空闲状态进行配置</string>
 
+    <string name="vad_start">开始</string>
+    <string name="vad_stop">停止</string>
 </resources>

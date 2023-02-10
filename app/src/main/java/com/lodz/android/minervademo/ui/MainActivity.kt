@@ -14,6 +14,7 @@ import com.lodz.android.minervademo.App
 import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.databinding.ActivityMainBinding
 import com.lodz.android.minervademo.ui.simple.SimpleActivity
+import com.lodz.android.minervademo.ui.vad.VadActivity
 import com.lodz.android.pandora.base.activity.BaseActivity
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
 import com.lodz.android.pandora.widget.base.TitleBarLayout
@@ -84,7 +85,7 @@ class MainActivity :BaseActivity(){
         }
 
         mBinding.vadBtn.setOnClickListener {
-            //https://github.com/gkonovalov/android-vad
+            VadActivity.start(getContext())
         }
     }
 

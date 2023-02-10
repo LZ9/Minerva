@@ -1,8 +1,5 @@
 package com.lodz.android.minerva.utils
 
-import kotlin.experimental.and
-import kotlin.experimental.or
-
 /**
  * Byte工具类
  * @author zhouL
@@ -15,7 +12,7 @@ object ByteUtil {
         val count = src.size shr 1
         val dest = ShortArray(count)
         for (i in 0 until count) {
-            dest[i] = ((src[i *2] and  0xff.toByte()) or ((src[2*i + 1] and 0xff.toByte()).toInt() shl 8).toByte()).toShort()
+            dest[i] = (src[i * 2].toInt() and 0xff or (src[2 * i + 1].toInt() and 0xff shl 8)).toShort()
         }
         return dest
     }
@@ -28,7 +25,6 @@ object ByteUtil {
             dest[i * 2] = src[i].toByte()
             dest[i * 2 + 1] = (src[i].toInt() shr 8).toByte()
         }
-
         return dest
     }
 

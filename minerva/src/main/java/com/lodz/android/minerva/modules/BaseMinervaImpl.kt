@@ -5,33 +5,41 @@ import android.media.AudioFormat
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.Idle
 import com.lodz.android.minerva.bean.states.RecordingStates
-import com.lodz.android.minerva.contract.*
+import com.lodz.android.minerva.contract.Minerva
+import com.lodz.android.minerva.contract.OnRecordingStatesListener
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 /**
- * 端点检测实现
+ * 录音功能基础实现
  * @author zhouL
- * @date 2021/11/10
+ * @date 2023/2/9
  */
-class VadImpl : Minerva {
+abstract class BaseMinervaImpl : Minerva {
+
+    companion object {
+        const val TAG = "MinervaTag"
+    }
+
     /** 上下文 */
-    private lateinit var mContext: Context
+    protected lateinit var mContext: Context
 
     /** 采样率 */
-    private var mSampleRate = 16000
+    protected var mSampleRate = 16000
     /** 声道 */
-    private var mChannel = AudioFormat.CHANNEL_IN_MONO
+    protected var mChannel = AudioFormat.CHANNEL_IN_MONO
     /** 位宽编码 */
-    private var mEncoding = AudioFormat.ENCODING_PCM_16BIT
+    protected var mEncoding = AudioFormat.ENCODING_PCM_16BIT
     /** 保存音频文件夹路径 */
-    private var mSaveDirPath = ""
+    protected var mSaveDirPath = ""
     /** 保存音频格式 */
-    private var mRecordingFormat = AudioFormats.PCM
+    protected var mRecordingFormat = AudioFormats.PCM
 
     /** 录音状态监听器 */
-    private var mOnRecordingStatesListener: OnRecordingStatesListener? = null
+    protected var mOnRecordingStatesListener: OnRecordingStatesListener? = null
 
     /** 当前录音状态 */
-    private var mRecordingState: RecordingStates = Idle
+    protected var mRecordingState: RecordingStates = Idle
 
     override fun init(
         context: Context,
@@ -61,26 +69,13 @@ class VadImpl : Minerva {
         mRecordingFormat = format
     }
 
-    override fun start() {
-
-    }
-
-    override fun stop() {
-
-    }
-
-    override fun pause() {
-
-    }
-
-    override fun resume() {
-
-    }
-
     override fun setOnRecordingStatesListener(listener: OnRecordingStatesListener?) {
-        mOnRecordingStatesListener= listener
+        mOnRecordingStatesListener = listener
     }
-
 
     override fun getRecordingState(): RecordingStates = mRecordingState
+
+    protected fun notifyStates(state: RecordingStates) {
+        MainScope().launch { mOnRecordingStatesListener?.onStateChange(state) }
+    }
 }

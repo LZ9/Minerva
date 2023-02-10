@@ -4,8 +4,8 @@ import android.content.Context
 import android.media.AudioFormat
 import androidx.annotation.IntDef
 import com.lodz.android.minerva.contract.*
-import com.lodz.android.minerva.modules.RecordingImpl
-import com.lodz.android.minerva.modules.VadImpl
+import com.lodz.android.minerva.modules.record.RecordingImpl
+import com.lodz.android.minerva.modules.vad.VadImpl
 import com.lodz.android.minerva.modules.service.RecordingServiceImpl
 import com.lodz.android.minerva.bean.AudioFormats
 import java.io.File

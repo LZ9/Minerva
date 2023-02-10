@@ -28,6 +28,11 @@ object Constant {
     /** 暂停中 */
     const val STATUS_PAUSE_NAME = "暂停中"
 
+    /** 录音中 */
+    const val STATUS_VAD_DETECT = 4
+    /** 录音中 */
+    const val STATUS_VAD_DETECT_NAME = "端点检测中"
+
 
     /** 音频格式字典 */
     const val DICT_AUDIO_FORMAT = "DICT_AUDIO_FORMAT"

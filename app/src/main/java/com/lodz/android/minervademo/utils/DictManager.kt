@@ -32,6 +32,7 @@ class DictManager private constructor() {
             DictBean(Constant.STATUS_IDLE, Constant.STATUS_IDLE_NAME),
             DictBean(Constant.STATUS_RECORDING, Constant.STATUS_RECORDING_NAME),
             DictBean(Constant.STATUS_PAUSE, Constant.STATUS_PAUSE_NAME),
+            DictBean(Constant.STATUS_VAD_DETECT, Constant.STATUS_VAD_DETECT_NAME),
         )
     )
 
