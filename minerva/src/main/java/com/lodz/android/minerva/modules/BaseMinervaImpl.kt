@@ -2,6 +2,7 @@ package com.lodz.android.minerva.modules
 
 import android.content.Context
 import android.media.AudioFormat
+import com.konovalov.vad.VadConfig
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.Idle
 import com.lodz.android.minerva.bean.states.RecordingStates
@@ -41,13 +42,17 @@ abstract class BaseMinervaImpl : Minerva {
     /** 当前录音状态 */
     protected var mRecordingState: RecordingStates = Idle
 
+    /** 端点检测配置项 */
+    protected var mVadConfig: VadConfig? = null
+
     override fun init(
         context: Context,
         sampleRate: Int,
         channel: Int,
         encoding: Int,
         dirPath: String,
-        format: AudioFormats
+        format: AudioFormats,
+        vadConfig: VadConfig?
     ) {
         mContext = context
         mSampleRate = sampleRate
@@ -55,6 +60,7 @@ abstract class BaseMinervaImpl : Minerva {
         mEncoding = encoding
         mSaveDirPath = dirPath
         mRecordingFormat = format
+        mVadConfig = vadConfig
     }
 
     override fun changeSampleRate(sampleRate: Int) {

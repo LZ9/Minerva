@@ -67,7 +67,7 @@ class VadActivity : BaseActivity() {
     }
 
     private fun initMinerva() {
-        mMinerva = MinervaAgent.create(MinervaAgent.VAD)
+        mMinerva = MinervaAgent.create()
             .setChannel(AudioFormat.CHANNEL_IN_MONO)
             .setSampleRate(16000)
             .setEncoding(Constant.ENCODING_16_BIT)
@@ -106,7 +106,7 @@ class VadActivity : BaseActivity() {
                 mBinding.statusTv.text = getString(R.string.simple_status)
                     .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
             }
-            .build(getContext())
+            .buildVad(getContext(), true, MinervaAgent.MIDDLE)
     }
 
 

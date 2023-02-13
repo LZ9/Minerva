@@ -32,18 +32,11 @@ class VadImpl : BaseMinervaImpl() {
         channel: Int,
         encoding: Int,
         dirPath: String,
-        format: AudioFormats
+        format: AudioFormats,
+        vadConfig: VadConfig?
     ) {
-        super.init(context, sampleRate, channel, encoding, dirPath, format)
-        mVad = Vad(
-            VadConfig.newBuilder()
-                .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
-                .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
-//                .setSilenceDurationMillis(500)
-//                .setVoiceDurationMillis(500)
-                .build()
-        )
+        super.init(context, sampleRate, channel, encoding, dirPath, format, vadConfig)
+        mVad = Vad(vadConfig)
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)

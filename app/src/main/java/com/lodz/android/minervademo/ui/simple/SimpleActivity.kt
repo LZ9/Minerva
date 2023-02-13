@@ -228,7 +228,7 @@ class SimpleActivity : BaseSandwichActivity() {
     }
 
     private fun initMinerva() {
-        mMinerva = MinervaAgent.create(MinervaAgent.RECORDING)
+        mMinerva = MinervaAgent.create()
             .setChannel(AudioFormat.CHANNEL_IN_MONO)
             .setSampleRate(getSampleRateValue(mSampleRate))
             .setEncoding(mEncoding)
@@ -279,7 +279,7 @@ class SimpleActivity : BaseSandwichActivity() {
                 mTopBinding.deleteAllBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
                 mBottomBinding.pauseBtn.isEnabled = mStatus == Constant.STATUS_RECORDING
             }
-            .build(getContext())
+            .buildRecording(getContext())
     }
 
     /** 更新音频文件列表数据 */
