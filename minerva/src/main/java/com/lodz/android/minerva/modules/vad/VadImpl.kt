@@ -56,10 +56,10 @@ class VadImpl : BaseMinervaImpl() {
             notifyStates(mRecordingState)
             audioRecord.startRecording()
 
-            val byteBuffer = ByteArray(bufferSize)
+            val byteBuffer = ShortArray(bufferSize)
             while (mRecordingState is VadDetect) {
                 val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
-                val isSpeech = mVad?.isSpeech(ByteUtil.toShorts(byteBuffer)) ?: false
+                val isSpeech = mVad?.isSpeech(byteBuffer) ?: false
                 notifyStates(VadDetect(byteBuffer, end, isSpeech))
             }
             notifyStates(VadDetect(null, -1, false))

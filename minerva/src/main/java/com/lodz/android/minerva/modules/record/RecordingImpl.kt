@@ -11,7 +11,7 @@ import com.lodz.android.minerva.bean.states.*
 import com.lodz.android.minerva.contract.*
 import com.lodz.android.minerva.modules.BaseMinervaImpl
 import com.lodz.android.minerva.mp3.Mp3Encoder
-import com.lodz.android.minerva.utils.ByteUtil
+import com.lodz.android.minerva.utils.ByteUtil.toByteArray
 import com.lodz.android.minerva.utils.RecordUtils
 import com.lodz.android.minerva.wav.WavUtils
 import kotlinx.coroutines.*
@@ -59,19 +59,21 @@ open class RecordingImpl : BaseMinervaImpl() {
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
         mRecordingState = Recording(null, -1)
         notifyStates(mRecordingState)
-        FileOutputStream(tempFile).use {
-            try {
-                audioRecord.startRecording()
-                if (format == AudioFormats.MP3) {
-                    recordByMp3(audioRecord, it, bufferSize, sampleRate)
-                } else {
-                    recordByPcm(audioRecord, it, bufferSize)
+        FileOutputStream(tempFile).use {fos->
+            DataOutputStream(fos).use { dos ->
+                try {
+                    audioRecord.startRecording()
+                    if (format == AudioFormats.MP3) {
+                        recordByMp3(audioRecord, dos, bufferSize, sampleRate)
+                    } else {
+                        recordByPcm(audioRecord, dos, bufferSize)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    mRecordingState = Idle
+                    notifyStates(Error(e, "录音发生异常"))
+                    return@launch
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                mRecordingState = Idle
-                notifyStates(Error(e, "录音发生异常"))
-                return@launch
             }
         }
         mFiles.add(tempFile)//把临时文件缓存起来
@@ -95,12 +97,13 @@ open class RecordingImpl : BaseMinervaImpl() {
     }
 
     /** PCM格式录音 */
-    private fun recordByPcm(audioRecord: AudioRecord, fos: FileOutputStream, bufferSize: Int) {
-        val byteBuffer = ByteArray(bufferSize)
+    private fun recordByPcm(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int) {
+        val byteBuffer = ShortArray(bufferSize)
         while (mRecordingState is Recording) {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
-            fos.write(byteBuffer, 0, end)
-            fos.flush()
+            byteBuffer.forEach {
+                dos.write(it.toByteArray())
+            }
             notifyStates(Recording(byteBuffer, end))
         }
         notifyStates(Recording(null, -1))
@@ -109,15 +112,15 @@ open class RecordingImpl : BaseMinervaImpl() {
     }
 
     /** MP3格式录音 */
-    private fun recordByMp3(audioRecord: AudioRecord, fos: FileOutputStream, bufferSize: Int, sampleRate: Int) {
+    private fun recordByMp3(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int, sampleRate: Int) {
         val byteBuffer = ShortArray(bufferSize)
         val mp3Buffer = ByteArray((7200 + (bufferSize * 2 * 1.25)).toInt())
         Mp3Encoder.init(sampleRate, getChannel().toInt(), sampleRate, getEncoding().toInt())
         while (mRecordingState is Recording) {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
             val encodedSize = Mp3Encoder.encode(byteBuffer, byteBuffer, end, mp3Buffer)
-            fos.write(mp3Buffer, 0, encodedSize)
-            notifyStates(Recording(ByteUtil.toBytes(byteBuffer), end))
+            dos.write(mp3Buffer, 0, encodedSize)
+            notifyStates(Recording(byteBuffer, end))
         }
         notifyStates(Recording(null, -1))
         audioRecord.stop()
@@ -125,7 +128,7 @@ open class RecordingImpl : BaseMinervaImpl() {
         if (mRecordingState is Stop) {
             val flushResult = Mp3Encoder.flush(mp3Buffer)
             if (flushResult > 0) {
-                fos.write(mp3Buffer, 0, flushResult)
+                dos.write(mp3Buffer, 0, flushResult)
             }
         }
     }
