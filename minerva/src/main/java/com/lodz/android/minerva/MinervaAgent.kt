@@ -112,6 +112,9 @@ class MinervaAgent private constructor() {
         if (!mSaveDirPath.endsWith(File.separator)) {
             mSaveDirPath += File.separator
         }
+        if (mEncoding != AudioFormat.ENCODING_PCM_16BIT){
+            throw IllegalArgumentException("vad only support 16-bit")
+        }
         val sampleRate = getVadSampleRate(mSampleRate)
         val frameSize = getVadFrameSize(sampleRate, frameSizeType)
 
@@ -139,10 +142,7 @@ class MinervaAgent private constructor() {
         }
 
     /** 获取端点检测的帧大小参数 */
-    private fun getVadFrameSize(
-        sampleRate: VadSampleRate,
-        frameSizeType: Int
-    ): VadFrameSize = Vad.getValidFrameSize(sampleRate)[frameSizeType]
-
+    private fun getVadFrameSize(sampleRate: VadSampleRate, frameSizeType: Int): VadFrameSize =
+        Vad.getValidFrameSize(sampleRate)[frameSizeType]
 
 }
