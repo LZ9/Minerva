@@ -3,8 +3,7 @@ package com.lodz.android.minerva
 import android.content.Context
 import android.media.AudioFormat
 import androidx.annotation.IntDef
-import com.konovalov.vad.Vad
-import com.konovalov.vad.VadConfig
+import com.konovalov.vad.*
 import com.lodz.android.minerva.contract.*
 import com.lodz.android.minerva.modules.record.RecordingImpl
 import com.lodz.android.minerva.modules.vad.VadImpl
@@ -19,22 +18,20 @@ import java.io.File
 class MinervaAgent private constructor() {
 
     /** 端点检测帧大小类型 */
-    @IntDef(LOW, MIDDLE, HIGH)
+    @IntDef(SMALL, MIDDLE, BIG)
     @Retention(AnnotationRetention.SOURCE)
     annotation class VadFrameSizeType
 
     companion object {
-
-        /** 低 */
-        const val LOW = 0
+        /** 小 */
+        const val SMALL = 0
 
         /** 中 */
         const val MIDDLE = 1
 
-        /** 高 */
-        const val HIGH = 2
+        /** 大 */
+        const val BIG = 2
 
-        //
         /** 创建 */
         @JvmStatic
         fun create(): MinervaAgent = MinervaAgent()
@@ -106,7 +103,7 @@ class MinervaAgent private constructor() {
         context: Context,
         isSaveActivityVoice: Boolean,
         @VadFrameSizeType frameSizeType: Int,
-        mode: VadConfig.Mode = VadConfig.Mode.VERY_AGGRESSIVE,
+        mode: VadMode = VadMode.VERY_AGGRESSIVE,
     ): Minerva {
         val audio = VadImpl()
         if (isSaveActivityVoice && mSaveDirPath.isEmpty()) {
@@ -118,35 +115,34 @@ class MinervaAgent private constructor() {
         val sampleRate = getVadSampleRate(mSampleRate)
         val frameSize = getVadFrameSize(sampleRate, frameSizeType)
 
-        val config = VadConfig.newBuilder()
+        val config = VadConfig.create()
             .setSampleRate(sampleRate)
             .setFrameSize(frameSize)
             .setMode(mode)
-            .build()
         audio.init(context, mSampleRate, mChannel, mEncoding, mSaveDirPath, mRecordingFormat, config)
         audio.setOnRecordingStatesListener(mOnRecordingStateListener)
         return audio
     }
 
     /** 获取端点检测的采样率参数 */
-    private fun getVadSampleRate(sampleRate: Int): VadConfig.SampleRate =
-        if (sampleRate == VadConfig.SampleRate.SAMPLE_RATE_8K.value) {
-            VadConfig.SampleRate.SAMPLE_RATE_8K
-        } else if (sampleRate == VadConfig.SampleRate.SAMPLE_RATE_16K.value) {
-            VadConfig.SampleRate.SAMPLE_RATE_16K
-        } else if (sampleRate == VadConfig.SampleRate.SAMPLE_RATE_32K.value) {
-            VadConfig.SampleRate.SAMPLE_RATE_32K
-        } else if (sampleRate == VadConfig.SampleRate.SAMPLE_RATE_48K.value) {
-            VadConfig.SampleRate.SAMPLE_RATE_48K
+    private fun getVadSampleRate(sampleRate: Int): VadSampleRate =
+        if (sampleRate == VadSampleRate.SAMPLE_RATE_8K.value) {
+            VadSampleRate.SAMPLE_RATE_8K
+        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_16K.value) {
+            VadSampleRate.SAMPLE_RATE_16K
+        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_32K.value) {
+            VadSampleRate.SAMPLE_RATE_32K
+        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_48K.value) {
+            VadSampleRate.SAMPLE_RATE_48K
         } else {
             throw IllegalArgumentException("unsupport vad SampleRate")
         }
 
     /** 获取端点检测的帧大小参数 */
-    private fun getVadFrameSize(sampleRate: VadConfig.SampleRate, frameSizeType: Int): VadConfig.FrameSize {
-        val frameSizesList = Vad.getValidFrameSize(sampleRate)
-        return frameSizesList[frameSizeType]
-    }
+    private fun getVadFrameSize(
+        sampleRate: VadSampleRate,
+        frameSizeType: Int
+    ): VadFrameSize = Vad.getValidFrameSize(sampleRate)[frameSizeType]
 
 
 }

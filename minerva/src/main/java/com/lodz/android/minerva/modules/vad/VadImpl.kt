@@ -36,6 +36,9 @@ class VadImpl : BaseMinervaImpl() {
         vadConfig: VadConfig?
     ) {
         super.init(context, sampleRate, channel, encoding, dirPath, format, vadConfig)
+        if (vadConfig == null){
+            throw NullPointerException("vadConfig is null")
+        }
         mVad = Vad(vadConfig)
     }
 
