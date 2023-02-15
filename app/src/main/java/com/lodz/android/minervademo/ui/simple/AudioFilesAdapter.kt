@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.append
+import com.lodz.android.corekt.file.formatVideoDuration
 import com.lodz.android.corekt.file.getFileSuffix
 import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minervademo.databinding.RvItemAudioFileBinding
@@ -34,7 +35,9 @@ class AudioFilesAdapter(context: Context) :BaseRvAdapter<File>(context){
 
     private fun showItem(holder: DataVBViewHolder, bean: File) {
         holder.getVB<RvItemAudioFileBinding>().apply {
-            fileNameTv.text = bean.name.append("\n").append("(").append(FileUtils.getFileTotalLengthUnit(bean.absolutePath)).append(")")
+            fileNameTv.text = bean.name.append("\n")
+                .append("(").append(FileUtils.getFileTotalLengthUnit(bean.absolutePath)).append(")")
+                .append(" --- ").append(bean.formatVideoDuration())
             deleteBtn.setOnClickListener {
                 mListener?.onClickDelete(bean)
             }
