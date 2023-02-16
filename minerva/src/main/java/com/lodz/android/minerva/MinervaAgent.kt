@@ -113,7 +113,7 @@ class MinervaAgent private constructor() {
             mSaveDirPath += File.separator
         }
         if (mEncoding != AudioFormat.ENCODING_PCM_16BIT){
-            throw IllegalArgumentException("vad only support 16-bit")
+            throw IllegalArgumentException("vad only support 16bit")
         }
         val sampleRate = getVadSampleRate(mSampleRate)
         val frameSize = getVadFrameSize(sampleRate, frameSizeType)

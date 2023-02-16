@@ -6,8 +6,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.abs
-import kotlin.math.log10
+import kotlin.math.*
 
 /**
  * 录音工具类
@@ -43,7 +42,7 @@ object RecordUtils {
 
     /** 获取16位宽的录音[data]音量（分贝） */
     fun getDbFor16Bit(data: ShortArray, end: Int): Double {
-        val r = if (end < 128) 128 else end
+        val r = if (end < Short.MAX_VALUE) end else Short.MAX_VALUE.toInt()
         var sum = 0.0
         for (i in data.indices) {
             sum += data[i] * data[i]
@@ -51,9 +50,6 @@ object RecordUtils {
         val mean = abs(sum / r)
         return if (mean <= 0.0) 0.0 else 10 * log10(mean)
     }
-
-    /** 获取16位宽的录音[data]音量（分贝） */
-    fun getDbFor16Bit(data: ByteArray, end: Int): Double = getDbFor16Bit(bytesToShort(data), end)
 
     /** 将ByteArray转为ShortArray */
     fun bytesToShort(data: ByteArray): ShortArray {

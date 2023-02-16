@@ -8,7 +8,6 @@ import androidx.annotation.RequiresPermission
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.VadDetect
 import com.lodz.android.minerva.modules.BaseMinervaImpl
-import com.lodz.android.minerva.utils.ByteUtil
 import com.konovalov.vad.Vad
 import com.konovalov.vad.VadConfig
 import com.lodz.android.minerva.bean.states.Stop
