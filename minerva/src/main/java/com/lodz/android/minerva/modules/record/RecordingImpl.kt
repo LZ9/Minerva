@@ -35,6 +35,7 @@ open class RecordingImpl : BaseMinervaImpl() {
             Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 重置为空闲")
             mRecordingState = Idle
         }
+        checkSaveDirPath()
         val resultPath = mSaveDirPath + RecordUtils.getRecordFileName(mRecordingFormat)
         val tempPath =
             if (mRecordingFormat == AudioFormats.MP3) {
@@ -147,6 +148,7 @@ open class RecordingImpl : BaseMinervaImpl() {
             Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 不为暂停")
             return
         }
+        checkSaveDirPath()
         val tempPath =
             if (mRecordingFormat == AudioFormats.MP3) {
                 mSaveDirPath + RecordUtils.getRecordTempFileName(AudioFormats.MP3)

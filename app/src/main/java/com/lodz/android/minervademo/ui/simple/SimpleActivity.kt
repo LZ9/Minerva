@@ -40,6 +40,8 @@ class SimpleActivity : BaseRefreshActivity() {
 
     private val mBinding: ActivitySimpleBinding by bindingLayout(ActivitySimpleBinding::inflate)
 
+    private val mFilePath = FileManager.getContentFolderPath()
+
     override fun getViewBindingLayout(): View = mBinding.root
 
     /** 状态 */
@@ -106,6 +108,7 @@ class SimpleActivity : BaseRefreshActivity() {
 
     override fun initData() {
         super.initData()
+        mBinding.audioFileView.setFilePath(mFilePath)
         mBinding.audioFileView.updateAudioFileList()
         initMinerva()
         showStatusCompleted()
@@ -117,7 +120,7 @@ class SimpleActivity : BaseRefreshActivity() {
             .setSampleRate(mSampleRate.rate)
             .setEncoding(mEncoding.encoding)
             .setAudioFormat(mAudioFormat)
-            .setSaveDirPath(FileManager.getContentFolderPath())
+            .setSaveDirPath(mFilePath)
             .setOnRecordingStatesListener{
                 when (it) {
                     is Idle -> {

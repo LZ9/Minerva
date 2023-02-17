@@ -10,6 +10,7 @@ import com.lodz.android.minerva.contract.Minerva
 import com.lodz.android.minerva.contract.OnRecordingStatesListener
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * 录音功能基础实现
@@ -83,5 +84,13 @@ abstract class BaseMinervaImpl : Minerva {
 
     protected fun notifyStates(state: RecordingStates) {
         MainScope().launch { mOnRecordingStatesListener?.onStateChange(state) }
+    }
+
+    /** 校验保存目录是否创建 */
+    protected fun checkSaveDirPath() {
+        val file = File(mSaveDirPath)
+        if (!file.isDirectory){
+            file.mkdirs()
+        }
     }
 }

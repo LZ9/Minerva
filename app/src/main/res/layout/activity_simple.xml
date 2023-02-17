@@ -7,7 +7,9 @@
     <com.lodz.android.minervademo.widget.ParamView
         android:id="@+id/param_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="10dp" />
 
     <com.lodz.android.minervademo.widget.LocalAudioFileView
         android:id="@+id/audio_file_view"
