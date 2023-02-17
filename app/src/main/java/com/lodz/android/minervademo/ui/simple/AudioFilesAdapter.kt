@@ -1,12 +1,10 @@
 package com.lodz.android.minervademo.ui.simple
 
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lodz.android.corekt.anko.append
 import com.lodz.android.corekt.file.formatVideoDuration
-import com.lodz.android.corekt.file.getFileSuffix
 import com.lodz.android.corekt.utils.FileUtils
 import com.lodz.android.minervademo.databinding.RvItemAudioFileBinding
 import com.lodz.android.pandora.widget.rv.recycler.base.BaseRvAdapter
@@ -44,11 +42,6 @@ class AudioFilesAdapter(context: Context) :BaseRvAdapter<File>(context){
             playBtn.setOnClickListener {
                 mListener?.onClickPlay(bean)
             }
-            val suffix = bean.absolutePath.getFileSuffix()
-            toWavBtn.visibility = if (suffix.lowercase() == ".pcm") View.VISIBLE else View.GONE
-            toWavBtn.setOnClickListener {
-                mListener?.onClickPcmToWav(bean)
-            }
         }
     }
 
@@ -63,6 +56,5 @@ class AudioFilesAdapter(context: Context) :BaseRvAdapter<File>(context){
 
         fun onClickDelete(file: File)
 
-        fun onClickPcmToWav(file: File)
     }
 }

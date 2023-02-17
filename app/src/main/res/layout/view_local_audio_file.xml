@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <com.lodz.android.pandora.widget.base.TitleBarLayout
-        android:id="@+id/title_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <com.lodz.android.minervademo.widget.ParamView
-        android:id="@+id/param_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,5 +30,26 @@
             android:text="@string/simple_delete_all" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/audio_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.lodz.android.pandora.widget.base.NoDataLayout
+            android:id="@+id/audio_no_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.lodz.android.pandora.widget.base.LoadingLayout
+            android:id="@+id/audio_loading_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 
 </LinearLayout>

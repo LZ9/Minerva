@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.lodz.android.minervademo.widget.ParamView
+        android:id="@+id/param_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.lodz.android.minervademo.widget.LocalAudioFileView
+        android:id="@+id/audio_file_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/start_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/simple_recording_start" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pause_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/simple_recording_pause" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/stop_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/simple_recording_stop" />
+    </LinearLayout>
+</LinearLayout>
