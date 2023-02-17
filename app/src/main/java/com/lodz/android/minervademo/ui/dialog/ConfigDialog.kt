@@ -3,10 +3,12 @@ package com.lodz.android.minervademo.ui.dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
-import com.lodz.android.corekt.anko.then
-import com.lodz.android.minervademo.config.Constant
+import com.lodz.android.corekt.anko.toArrayList
+import com.lodz.android.minerva.bean.AudioFormats
+import com.lodz.android.minervademo.bean.DictBean
 import com.lodz.android.minervademo.databinding.DialogConfigBinding
-import com.lodz.android.minervademo.utils.DictManager
+import com.lodz.android.minervademo.enums.Encodings
+import com.lodz.android.minervademo.enums.SampleRates
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
 import com.lodz.android.pandora.widget.dialog.BaseBottomDialog
 
@@ -18,11 +20,17 @@ import com.lodz.android.pandora.widget.dialog.BaseBottomDialog
 class ConfigDialog(context: Context) : BaseBottomDialog(context) {
 
     /** 音频格式 */
-    private var mAudioFormat = Constant.AUDIO_FORMAT_WAV
+    private var mAudioFormat: AudioFormats = AudioFormats.WAV
+    /** 音频格式是否可选 */
+    private var mAudioFormatEnable: Boolean = true
     /** 采样率 */
-    private var mSampleRate = Constant.SAMPLE_RATE_16000
-    /** 音频位宽 */
-    private var mEncoding = Constant.ENCODING_16_BIT
+    private var mSampleRate: SampleRates = SampleRates.SAMPLE_RATE_16K
+    /** 采样率是否可选 */
+    private var mSampleRateEnable: Boolean = true
+    /** 位宽 */
+    private var mEncoding: Encodings = Encodings.BIT_16
+    /** 位宽是否可选 */
+    private var mEncodingEnable: Boolean = true
 
     /** 监听器 */
     private var mListener :OnClickConfirmListener? = null
@@ -33,26 +41,21 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
 
     override fun findViews() {
         super.findViews()
-        val audioFormatList = DictManager.get().getDictListBean(Constant.DICT_AUDIO_FORMAT)
-        if (audioFormatList != null){
-            mBinding.audioFormatCrg.setDataList(audioFormatList.list.toMutableList())
-            mBinding.audioFormatCrg.setSelectedId(mAudioFormat.toString())
-        }
-        mBinding.audioFormatCrg.visibility = (audioFormatList != null).then { View.VISIBLE } ?: View.GONE
 
-        val sampleRateList = DictManager.get().getDictListBean(Constant.DICT_SAMPLE_RATE)
-        if (sampleRateList != null){
-            mBinding.sampleRateCrg.setDataList(sampleRateList.list.toMutableList())
-            mBinding.sampleRateCrg.setSelectedId(mSampleRate.toString())
-        }
-        mBinding.sampleRateCrg.visibility = (audioFormatList != null).then { View.VISIBLE } ?: View.GONE
+        val audioFormatList = createAudioFormatList()
+        mBinding.audioFormatCrg.setDataList(audioFormatList.toMutableList())
+        mBinding.audioFormatCrg.setSelectedId(mAudioFormat.id.toString())
+        mBinding.audioFormatCrg.isEnabled = mAudioFormatEnable
 
-        val encodingList = DictManager.get().getDictListBean(Constant.DICT_ENCODING)
-        if (encodingList != null){
-            mBinding.encodingCrg.setDataList(encodingList.list.toMutableList())
-            mBinding.encodingCrg.setSelectedId(mEncoding.toString())
-        }
-        mBinding.encodingCrg.visibility = (audioFormatList != null).then { View.VISIBLE } ?: View.GONE
+        val sampleRateList = createSampleRateList()
+        mBinding.sampleRateCrg.setDataList(sampleRateList.toMutableList())
+        mBinding.sampleRateCrg.setSelectedId(mSampleRate.rate.toString())
+        mBinding.sampleRateCrg.isEnabled = mSampleRateEnable
+
+        val encodingList = createEncodingList()
+        mBinding.encodingCrg.setDataList(encodingList.toMutableList())
+        mBinding.encodingCrg.setSelectedId(mEncoding.encoding.toString())
+        mBinding.encodingCrg.isEnabled = mEncodingEnable
     }
 
     override fun setListeners() {
@@ -63,21 +66,86 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
         }
 
         mBinding.okBtn.setOnClickListener {
-            val audioFormat = (mBinding.audioFormatCrg.getSelectedId().isNotEmpty()).then { mBinding.audioFormatCrg.getSelectedId()[0].toInt() }
-                ?: Constant.AUDIO_FORMAT_WAV
-            val sampleRate = (mBinding.sampleRateCrg.getSelectedId().isNotEmpty()).then { mBinding.sampleRateCrg.getSelectedId()[0].toInt() }
-                ?: Constant.SAMPLE_RATE_16000
-            val encoding = (mBinding.encodingCrg.getSelectedId().isNotEmpty()).then { mBinding.encodingCrg.getSelectedId()[0].toInt() }
-                ?: Constant.ENCODING_16_BIT
-            mListener?.onClick(getDialogInterface(), audioFormat, sampleRate, encoding)
+            mAudioFormat = getSelectedAudioFormat(mBinding.audioFormatCrg.getSelectedId()[0])
+            mSampleRate = getSelectedSampleRate(mBinding.sampleRateCrg.getSelectedId()[0])
+            mEncoding = getSelectedEncoding(mBinding.encodingCrg.getSelectedId()[0])
+            mListener?.onClick(getDialogInterface(), mAudioFormat, mSampleRate, mEncoding)
         }
     }
 
     /** 设置数据[audioFormat]音频格式，[sampleRate]采样率，[encoding]音频位宽 */
-    fun setData(audioFormat: Int, sampleRate: Int, encoding: Int) {
+    fun setData(audioFormat: AudioFormats, sampleRate: SampleRates, encoding: Encodings) {
         mAudioFormat = audioFormat
         mSampleRate = sampleRate
         mEncoding = encoding
+    }
+
+    /** 设置是否可选[audioFormatEnable]音频格式，[sampleRateEnable]采样率，[encodingEnable]音频位宽 */
+    fun setSelectEnable(
+        audioFormatEnable: Boolean = true,
+        sampleRateEnable: Boolean = true,
+        encodingEnable: Boolean = true
+    ) {
+        mAudioFormatEnable = audioFormatEnable
+        mSampleRateEnable = sampleRateEnable
+        mEncodingEnable = encodingEnable
+    }
+
+    /** 创建音频格式列表 */
+    private fun createAudioFormatList(): ArrayList<DictBean> {
+        val list = ArrayList<DictBean>()
+        enumValues<AudioFormats>().toArrayList().forEach {
+            list.add(DictBean(it.id, it.suffix))
+        }
+        return list
+    }
+
+    /** 根据[key]获取选中的音频格式 */
+    private fun getSelectedAudioFormat(key: String): AudioFormats {
+        enumValues<AudioFormats>().toArrayList().forEach {
+            if (it.id.toString() == key) {
+                return it
+            }
+        }
+        return AudioFormats.WAV
+    }
+
+    /** 创建采样率列表 */
+    private fun createSampleRateList(): ArrayList<DictBean> {
+        val list = ArrayList<DictBean>()
+        enumValues<SampleRates>().toArrayList().forEach {
+            list.add(DictBean(it.rate, it.text))
+        }
+        return list
+    }
+
+    /** 根据[key]获取选中的采样率 */
+    private fun getSelectedSampleRate(key: String): SampleRates {
+        enumValues<SampleRates>().toArrayList().forEach {
+            if (it.rate.toString() == key) {
+                return it
+            }
+        }
+        return SampleRates.SAMPLE_RATE_16K
+    }
+
+    /** 创建位宽列表 */
+    private fun createEncodingList(): ArrayList<DictBean> {
+        val list = ArrayList<DictBean>()
+        enumValues<Encodings>().toArrayList().forEach {
+            list.add(DictBean(it.encoding, it.text))
+        }
+        return list
+    }
+
+    /** 根据[key]获取选中的位宽 */
+    private fun getSelectedEncoding(key: String): Encodings {
+        enumValues<Encodings>().toArrayList().forEach {
+            if (it.encoding.toString() == key) {
+                return it
+            }
+        }
+        return Encodings.BIT_16
     }
 
     /** 设置监听器[listener] */
@@ -86,6 +154,6 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
     }
 
     fun interface OnClickConfirmListener {
-        fun onClick(dif: DialogInterface, audioFormat: Int, sampleRate: Int, encoding: Int)
+        fun onClick(dif: DialogInterface, audioFormat: AudioFormats, sampleRate: SampleRates, encoding: Encodings)
     }
 }

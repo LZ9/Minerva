@@ -22,12 +22,12 @@ import com.lodz.android.minerva.wav.WavUtils
 import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.utils.FileManager
 import com.lodz.android.minervademo.R
-import com.lodz.android.minervademo.config.Constant
 import com.lodz.android.minervademo.databinding.ActivitySimpleBottomBinding
 import com.lodz.android.minervademo.databinding.ActivitySimpleContentBinding
 import com.lodz.android.minervademo.databinding.ActivitySimpleTopBinding
-import com.lodz.android.minervademo.ui.dialog.ConfigDialog
-import com.lodz.android.minervademo.utils.DictManager
+import com.lodz.android.minervademo.enums.AudioStatus
+import com.lodz.android.minervademo.enums.Encodings
+import com.lodz.android.minervademo.enums.SampleRates
 import com.lodz.android.pandora.base.activity.BaseSandwichActivity
 import com.lodz.android.pandora.rx.subscribe.single.BaseSingleObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
@@ -62,32 +62,24 @@ class SimpleActivity : BaseSandwichActivity() {
     override fun getBottomViewBindingLayout(): View = mBottomBinding.root
 
     /** 状态 */
-    private var mStatus = Constant.STATUS_IDLE
+    private var mStatus: AudioStatus = AudioStatus.IDLE
     /** 音频格式 */
-    private var mAudioFormat = Constant.AUDIO_FORMAT_WAV
+    private var mAudioFormat: AudioFormats = AudioFormats.WAV
     /** 采样率 */
-    private var mSampleRate = Constant.SAMPLE_RATE_16000
+    private var mSampleRate: SampleRates = SampleRates.SAMPLE_RATE_16K
     /** 音频位宽 */
-    private var mEncoding = Constant.ENCODING_16_BIT
+    private var mEncoding: Encodings = Encodings.BIT_16
 
     private var mMinerva: Minerva? = null
 
     /** 音频文件适配器 */
     private lateinit var mAdapter: AudioFilesAdapter
 
-    override fun startCreate() {
-        super.startCreate()
-        DictManager.get().init()
-    }
-
     override fun findViews(savedInstanceState: Bundle?) {
         super.findViews(savedInstanceState)
         setSwipeRefreshEnabled(true)
         setTitleBar()
-        updateConfigView()
         initRecyclerView()
-        mTopBinding.statusTv.text = getString(R.string.simple_status)
-            .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
         mTopBinding.savePathTv.text = getString(R.string.simple_save_path).append(FileManager.getContentFolderPath())
         mBottomBinding.startBtn.isEnabled = true
         mTopBinding.deleteAllBtn.isEnabled = true
@@ -100,8 +92,7 @@ class SimpleActivity : BaseSandwichActivity() {
     }
 
     private fun initRecyclerView() {
-        mAdapter = mContentBinding.audioRv.linear()
-            .setup(AudioFilesAdapter(getContext()))
+        mAdapter = mContentBinding.audioRv.linear().setup(AudioFilesAdapter(getContext()))
     }
 
     override fun onDataRefresh() {
@@ -117,12 +108,13 @@ class SimpleActivity : BaseSandwichActivity() {
             finish()
         }
 
-        mTopBinding.configBtn.setOnClickListener {
-            if (mStatus == Constant.STATUS_IDLE) {
-                showConfigDialog()
-                return@setOnClickListener
-            }
-            toastShort(R.string.simple_config_disable)
+        mTopBinding.paramView.setOnParamChangedListener { audioFormat, sampleRate, encoding ->
+            mAudioFormat = audioFormat
+            mMinerva?.changeAudioFormat(audioFormat)
+            mSampleRate = sampleRate
+            mMinerva?.changeSampleRate(sampleRate.rate)
+            mEncoding = encoding
+            mMinerva?.changeEncoding(encoding.encoding)
         }
 
         mTopBinding.deleteAllBtn.setOnClickListener {
@@ -131,7 +123,7 @@ class SimpleActivity : BaseSandwichActivity() {
         }
 
         mBottomBinding.startBtn.setOnClickListener {
-            if (mStatus == Constant.STATUS_PAUSE) {
+            if (mStatus == AudioStatus.PAUSE) {
                 mMinerva?.resume()
             } else {
                 mMinerva?.start()
@@ -165,19 +157,10 @@ class SimpleActivity : BaseSandwichActivity() {
             }
 
             override fun onClickPcmToWav(file: File) {
-                val sampleRate = when (mSampleRate) {
-                    Constant.SAMPLE_RATE_8000 -> 8000
-                    Constant.SAMPLE_RATE_16000 -> 16000
-                    else -> 44100
-                }
-                val encoding = when (mEncoding) {
-                    Constant.ENCODING_16_BIT -> 16
-                    else -> 8
-                }
                 AlertDialog.Builder(getContext())
-                    .setMessage("是否按当前采样率：$sampleRate 和位宽：$encoding 来进行转换？（若转换配置和PCM录音配置不同，则转出来的wav音频会失真）")
+                    .setMessage("是否按当前采样率：${mSampleRate.text} 和位宽：${mEncoding.text} 来进行转换？（若转换配置和PCM录音配置不同，则转出来的wav音频会失真）")
                     .setPositiveButton("是") { dif, which ->
-                        val header = WavUtils.generateHeader(file.length().toInt(), sampleRate, 1, encoding.toShort())
+                        val header = WavUtils.generateHeader(file.length().toInt(), mSampleRate.rate, 1, mEncoding.encoding.toShort())
                         WavUtils.pcmToWav(file, header)
                         updateAudioFileList()
                         dif.dismiss()
@@ -191,35 +174,6 @@ class SimpleActivity : BaseSandwichActivity() {
         })
     }
 
-    /** 更新配置相关控件 */
-    private fun updateConfigView(){
-        mTopBinding.audioFormatTv.text = getString(R.string.simple_audio_format).append(
-            DictManager.get().getDictBean(Constant.DICT_AUDIO_FORMAT, mAudioFormat)?.value ?: "-"
-        )
-        mTopBinding.sampleRateTv.text = getString(R.string.simple_sample_rate).append(
-            DictManager.get().getDictBean(Constant.DICT_SAMPLE_RATE, mSampleRate)?.value ?: "-"
-        )
-        mTopBinding.encodingTv.text = getString(R.string.simple_encoding).append(
-            DictManager.get().getDictBean(Constant.DICT_ENCODING, mEncoding)?.value ?: "-"
-        )
-    }
-
-    /** 显示配置弹框 */
-    private fun showConfigDialog() {
-        val dialog = ConfigDialog(getContext())
-        dialog.setData(mAudioFormat, mSampleRate, mEncoding)
-        dialog.setOnClickConfirmListener { dif, audioFormat, sampleRate, encoding ->
-            mAudioFormat = audioFormat
-            mSampleRate = sampleRate
-            mEncoding = encoding
-            updateConfigView()
-            mMinerva?.changeSampleRate(getSampleRateValue(mSampleRate))
-            mMinerva?.changeEncoding(mEncoding)
-            mMinerva?.changeAudioFormat(getAudioFormat(mAudioFormat))
-            dif.dismiss()
-        }
-        dialog.show()
-    }
 
     override fun initData() {
         super.initData()
@@ -230,54 +184,53 @@ class SimpleActivity : BaseSandwichActivity() {
     private fun initMinerva() {
         mMinerva = MinervaAgent.create()
             .setChannel(AudioFormat.CHANNEL_IN_MONO)
-            .setSampleRate(getSampleRateValue(mSampleRate))
-            .setEncoding(mEncoding)
-            .setAudioFormat(getAudioFormat(mAudioFormat))
+            .setSampleRate(mSampleRate.rate)
+            .setEncoding(mEncoding.encoding)
+            .setAudioFormat(mAudioFormat)
             .setSaveDirPath(FileManager.getContentFolderPath())
             .setOnRecordingStatesListener{
                 when (it) {
                     is Idle -> {
-                        mStatus = Constant.STATUS_IDLE
+                        mStatus = AudioStatus.IDLE
                         Log.v("testtag", "空闲")
                     }
                     is Recording -> {
-                        mStatus = Constant.STATUS_RECORDING
-                        val tips = if (mEncoding == Constant.ENCODING_16_BIT) {
+                        mStatus = AudioStatus.RECORDING
+                        val tips = if (mEncoding == Encodings.BIT_16) {
                             val data = it.data
                             val db = if (data == null) 0 else RecordUtils.getDbFor16Bit(data, it.end)
                             "$db db"
                         } else {
                             "非16bit位宽，暂无解析"
                         }
-                        mTopBinding.soundSizeTv.text = getString(R.string.simple_sound_size).append(tips)
+                        mTopBinding.paramView.setSoundSizeText(tips)
                         Log.d("testtag", "录音中")
                     }
                     is Pause -> {
-                        mStatus = Constant.STATUS_PAUSE
+                        mStatus = AudioStatus.PAUSE
                         Log.i("testtag", "暂停")
                     }
                     is Stop -> {
-                        mStatus = Constant.STATUS_IDLE
+                        mStatus = AudioStatus.IDLE
                         Log.i("testtag", "停止")
                     }
                     is Finish -> {
-                        mStatus = Constant.STATUS_IDLE
+                        mStatus = AudioStatus.IDLE
                         toastShort(it.file.absolutePath)
                         updateAudioFileList()
                         Log.v("testtag", "完成")
                     }
                     is Error -> {
-                        mStatus = Constant.STATUS_IDLE
+                        mStatus = AudioStatus.IDLE
                         toastShort("${it.msg} , ${it.t}")
                         Log.e("testtag", "异常")
                     }
                     else -> {}
                 }
-                mTopBinding.statusTv.text = getString(R.string.simple_status)
-                    .append(DictManager.get().getDictBean(Constant.DICT_STATUS, mStatus)?.value ?: "未知")
-                mBottomBinding.startBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
-                mTopBinding.deleteAllBtn.isEnabled = mStatus != Constant.STATUS_RECORDING
-                mBottomBinding.pauseBtn.isEnabled = mStatus == Constant.STATUS_RECORDING
+                mTopBinding.paramView.setStatusText(mStatus.text)
+                mBottomBinding.startBtn.isEnabled = mStatus != AudioStatus.RECORDING
+                mTopBinding.deleteAllBtn.isEnabled = mStatus != AudioStatus.RECORDING
+                mBottomBinding.pauseBtn.isEnabled = mStatus == AudioStatus.RECORDING
             }
             .buildRecording(getContext())
     }
@@ -306,21 +259,5 @@ class SimpleActivity : BaseSandwichActivity() {
                     }
                 }
             ))
-    }
-
-    /** 获取音频格式 */
-    private fun getAudioFormat(audioFormat: Int): AudioFormats = when (audioFormat) {
-        Constant.AUDIO_FORMAT_PCM -> AudioFormats.PCM
-        Constant.AUDIO_FORMAT_WAV -> AudioFormats.WAV
-        Constant.AUDIO_FORMAT_MP3 -> AudioFormats.MP3
-        else -> AudioFormats.PCM
-    }
-
-    /** 获取采样率值 */
-    private fun getSampleRateValue(sampleRate: Int): Int = when (sampleRate) {
-        Constant.SAMPLE_RATE_8000 -> 8000
-        Constant.SAMPLE_RATE_16000 -> 16000
-        Constant.SAMPLE_RATE_44100 -> 44100
-        else -> 44100
     }
 }

@@ -18,7 +18,7 @@
     <string name="simple_recording_pause">暂停</string>
     <string name="simple_recording_stop">结束</string>
     <string name="simple_save_path">保存路径：</string>
-    <string name="simple_status">录音状态：</string>
+    <string name="simple_status">音频状态：</string>
     <string name="simple_sound_size">当前分贝：</string>
     <string name="simple_audio_format">音频格式：</string>
     <string name="simple_sample_rate">音频采样率：</string>

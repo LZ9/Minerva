@@ -64,7 +64,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,22 +72,22 @@
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/ok_btn"
+            android:id="@+id/cancel_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:backgroundTint="@color/color_00a1d5"
-            android:text="@string/simple_ok" />
+            android:text="@string/simple_cancel" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_btn"
+            android:id="@+id/ok_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:backgroundTint="@color/color_00a1d5"
-            android:text="@string/simple_cancel" />
+            android:text="@string/simple_ok" />
 
     </LinearLayout>
 
