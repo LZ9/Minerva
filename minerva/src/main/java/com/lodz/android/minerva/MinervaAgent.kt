@@ -17,21 +17,7 @@ import java.io.File
  */
 class MinervaAgent private constructor() {
 
-    /** 端点检测帧大小类型 */
-    @IntDef(SMALL, MIDDLE, BIG)
-    @Retention(AnnotationRetention.SOURCE)
-    annotation class VadFrameSizeType
-
     companion object {
-        /** 小 */
-        const val SMALL = 0
-
-        /** 中 */
-        const val MIDDLE = 1
-
-        /** 大 */
-        const val BIG = 2
-
         /** 创建 */
         @JvmStatic
         fun create(): MinervaAgent = MinervaAgent()
@@ -101,8 +87,8 @@ class MinervaAgent private constructor() {
     /** 完成端点检测构建， 上下文[context]，是否保存活动语音[isSaveActivityVoice]，端点检测帧大小类型[frameSizeType]，端点检测模式[mode] */
     fun buildVad(
         context: Context,
-        isSaveActivityVoice: Boolean,
-        @VadFrameSizeType frameSizeType: Int,
+        isSaveActivityVoice: Boolean = false,
+        frameSizeType: VadFrameSizeType = VadFrameSizeType.SMALL,
         mode: VadMode = VadMode.VERY_AGGRESSIVE,
     ): Minerva {
         val audio = VadImpl()
@@ -116,7 +102,7 @@ class MinervaAgent private constructor() {
             throw IllegalArgumentException("vad only support 16bit")
         }
         val sampleRate = getVadSampleRate(mSampleRate)
-        val frameSize = getVadFrameSize(sampleRate, frameSizeType)
+        val frameSize = getVadFrameSize(sampleRate, frameSizeType.value)
 
         val config = VadConfig.create()
             .setSampleRate(sampleRate)

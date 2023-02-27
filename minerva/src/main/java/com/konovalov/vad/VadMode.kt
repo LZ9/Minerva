@@ -9,5 +9,5 @@ enum class VadMode(val value: Int) {
     NORMAL(0),
     LOW_BITRATE(1),
     AGGRESSIVE(2),
-    VERY_AGGRESSIVE(3);
+    VERY_AGGRESSIVE(3)
 }
