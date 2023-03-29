@@ -25,9 +25,9 @@ import java.io.*
 open class RecordingImpl : BaseMinervaImpl() {
 
     /** 合并后的最终录音文件 */
-    private var mResultFile: File? = null
+    protected var mResultFile: File? = null
     /** 多段录音文件列表 */
-    private var mFiles = ArrayList<File>()
+    protected var mFiles = ArrayList<File>()
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun start() {
@@ -55,7 +55,7 @@ open class RecordingImpl : BaseMinervaImpl() {
 
     /** 录音成PCM文件 */
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
-    private fun startRecorder(tempFile: File, sampleRate: Int, channel: Int, encoding: Int, format: AudioFormats) = MainScope().launch(Dispatchers.IO) {
+    protected fun startRecorder(tempFile: File, sampleRate: Int, channel: Int, encoding: Int, format: AudioFormats) = MainScope().launch(Dispatchers.IO) {
         val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channel, encoding)
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
         mRecordingState = Recording(null, -1)
@@ -98,7 +98,7 @@ open class RecordingImpl : BaseMinervaImpl() {
     }
 
     /** PCM格式录音 */
-    private fun recordByPcm(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int) {
+    protected fun recordByPcm(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int) {
         val byteBuffer = ShortArray(bufferSize)
         while (mRecordingState is Recording) {
             val end = audioRecord.read(byteBuffer, 0, byteBuffer.size)
@@ -113,7 +113,7 @@ open class RecordingImpl : BaseMinervaImpl() {
     }
 
     /** MP3格式录音 */
-    private fun recordByMp3(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int, sampleRate: Int) {
+    protected fun recordByMp3(audioRecord: AudioRecord, dos: DataOutputStream, bufferSize: Int, sampleRate: Int) {
         val byteBuffer = ShortArray(bufferSize)
         val mp3Buffer = ByteArray((7200 + (bufferSize * 2 * 1.25)).toInt())
         Mp3Encoder.init(sampleRate, getChannel().toInt(), sampleRate, getEncoding().toInt())
@@ -159,7 +159,7 @@ open class RecordingImpl : BaseMinervaImpl() {
         startRecorder(tempFile, mSampleRate, mChannel, mEncoding, mRecordingFormat)
     }
 
-    private fun makeFile() {
+    protected fun makeFile() {
         mergeTempFile(mResultFile, mFiles)
         if (mRecordingFormat == AudioFormats.WAV) {
             makeWav()
@@ -167,7 +167,7 @@ open class RecordingImpl : BaseMinervaImpl() {
         Log.v(TAG, "------------ 结束录音 ------------")
     }
 
-    private fun makeWav() {
+    protected fun makeWav() {
         val file = mResultFile
         if (file == null || file.length() == 0L){
             notifyStates(Error(NullPointerException(), "未识别到录音文件"))
@@ -179,7 +179,7 @@ open class RecordingImpl : BaseMinervaImpl() {
     }
 
     /** 合并Pcm文件 */
-    private fun mergeTempFile(file: File?, files: ArrayList<File>) {
+    protected fun mergeTempFile(file: File?, files: ArrayList<File>) {
         if (file == null || files.isEmpty()) {
             return
         }
@@ -208,13 +208,13 @@ open class RecordingImpl : BaseMinervaImpl() {
         files.clear()
     }
 
-    private fun getChannel(): Short = when (mChannel) {
+    protected fun getChannel(): Short = when (mChannel) {
         AudioFormat.CHANNEL_IN_MONO -> 1
         AudioFormat.CHANNEL_IN_STEREO -> 2
         else -> 0
     }
 
-    private fun getEncoding(): Short = when (mEncoding) {
+    protected fun getEncoding(): Short = when (mEncoding) {
         AudioFormat.ENCODING_PCM_8BIT -> 8
         AudioFormat.ENCODING_PCM_16BIT -> 16
         else -> 0

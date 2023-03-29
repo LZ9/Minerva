@@ -12,7 +12,7 @@ import com.lodz.android.minerva.bean.states.RecordingStates
  */
 interface Minerva {
 
-    /** 初始化上下文[context]，采样率[sampleRate]，声道[channel]，位宽编码[encoding]，保存路径[dirPath]，音频格式[format]，端点检测配置项[vadConfig] */
+    /** 初始化上下文[context]，采样率[sampleRate]，声道[channel]，位宽编码[encoding]，保存路径[dirPath]，音频格式[format] */
     fun init(
         context: Context,
         sampleRate: Int,
@@ -20,17 +20,16 @@ interface Minerva {
         encoding: Int,
         dirPath: String,
         format: AudioFormats,
-        vadConfig: VadConfig?
     )
 
     /** 改变采样率[sampleRate] */
-    fun changeSampleRate(sampleRate: Int)
+    fun changeSampleRate(sampleRate: Int): Boolean
 
     /** 改变位宽编码[encoding] */
-    fun changeEncoding(encoding: Int)
+    fun changeEncoding(encoding: Int): Boolean
 
     /** 改变音频格式[format] */
-    fun changeAudioFormat(format: AudioFormats)
+    fun changeAudioFormat(format: AudioFormats): Boolean
 
     /** 启动 */
     fun start()

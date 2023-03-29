@@ -1,4 +1,4 @@
-package com.lodz.android.minervademo.ui.simple
+package com.lodz.android.minervademo.ui.adapter
 
 import android.content.Context
 import android.view.ViewGroup

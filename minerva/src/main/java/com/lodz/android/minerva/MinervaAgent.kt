@@ -8,6 +8,7 @@ import com.lodz.android.minerva.contract.*
 import com.lodz.android.minerva.modules.record.RecordingImpl
 import com.lodz.android.minerva.modules.vad.VadImpl
 import com.lodz.android.minerva.bean.AudioFormats
+import com.lodz.android.minerva.utils.VadUtils
 import java.io.File
 
 /**
@@ -79,7 +80,7 @@ class MinervaAgent private constructor() {
         if (!mSaveDirPath.endsWith(File.separator)) {
             mSaveDirPath += File.separator
         }
-        audio.init(context, mSampleRate, mChannel, mEncoding, mSaveDirPath, mRecordingFormat, null)
+        audio.init(context, mSampleRate, mChannel, mEncoding, mSaveDirPath, mRecordingFormat)
         audio.setOnRecordingStatesListener(mOnRecordingStateListener)
         return audio
     }
@@ -90,7 +91,7 @@ class MinervaAgent private constructor() {
         isSaveActivityVoice: Boolean = false,
         frameSizeType: VadFrameSizeType = VadFrameSizeType.SMALL,
         mode: VadMode = VadMode.VERY_AGGRESSIVE,
-    ): Minerva {
+    ): MinervaVad {
         val audio = VadImpl()
         if (isSaveActivityVoice && mSaveDirPath.isEmpty()) {
             throw IllegalArgumentException("save path is empty")
@@ -101,34 +102,20 @@ class MinervaAgent private constructor() {
         if (mEncoding != AudioFormat.ENCODING_PCM_16BIT){
             throw IllegalArgumentException("vad only support 16bit")
         }
-        val sampleRate = getVadSampleRate(mSampleRate)
-        val frameSize = getVadFrameSize(sampleRate, frameSizeType.value)
+        val sampleRate = VadUtils.getVadSampleRate(mSampleRate)
+        val frameSize = VadUtils.getVadFrameSize(sampleRate, frameSizeType.value)
 
         val config = VadConfig.create()
             .setSampleRate(sampleRate)
             .setFrameSize(frameSize)
             .setMode(mode)
-        audio.init(context, mSampleRate, mChannel, mEncoding, mSaveDirPath, mRecordingFormat, config)
+        audio.init(context, mSampleRate, mChannel, mEncoding, mSaveDirPath, mRecordingFormat)
+        audio.setVadConfig(config)
         audio.setOnRecordingStatesListener(mOnRecordingStateListener)
+        audio.changeSaveActiveVoice(isSaveActivityVoice)
         return audio
     }
 
-    /** 获取端点检测的采样率参数 */
-    private fun getVadSampleRate(sampleRate: Int): VadSampleRate =
-        if (sampleRate == VadSampleRate.SAMPLE_RATE_8K.value) {
-            VadSampleRate.SAMPLE_RATE_8K
-        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_16K.value) {
-            VadSampleRate.SAMPLE_RATE_16K
-        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_32K.value) {
-            VadSampleRate.SAMPLE_RATE_32K
-        } else if (sampleRate == VadSampleRate.SAMPLE_RATE_48K.value) {
-            VadSampleRate.SAMPLE_RATE_48K
-        } else {
-            throw IllegalArgumentException("unsupport vad SampleRate")
-        }
 
-    /** 获取端点检测的帧大小参数 */
-    private fun getVadFrameSize(sampleRate: VadSampleRate, frameSizeType: Int): VadFrameSize =
-        Vad.getValidFrameSize(sampleRate)[frameSizeType]
 
 }

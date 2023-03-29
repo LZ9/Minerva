@@ -40,7 +40,7 @@ class SimpleActivity : BaseRefreshActivity() {
 
     private val mBinding: ActivitySimpleBinding by bindingLayout(ActivitySimpleBinding::inflate)
 
-    private val mFilePath = FileManager.getContentFolderPath()
+    private val mFilePath = FileManager.getRecordingFolderPath()
 
     override fun getViewBindingLayout(): View = mBinding.root
 
@@ -72,12 +72,12 @@ class SimpleActivity : BaseRefreshActivity() {
         setSwipeRefreshFinish()
     }
 
+    override fun onClickBackBtn() {
+        finish()
+    }
+
     override fun setListeners() {
         super.setListeners()
-
-        getTitleBarLayout().setOnBackBtnClickListener {
-            finish()
-        }
 
         mBinding.paramView.setOnParamChangedListener { audioFormat, sampleRate, encoding ->
             mAudioFormat = audioFormat
@@ -160,7 +160,7 @@ class SimpleActivity : BaseRefreshActivity() {
                     }
                     else -> {}
                 }
-                mBinding.paramView.setStatusText(mStatus.text)
+                mBinding.paramView.setStatus(mStatus)
                 mBinding.startBtn.isEnabled = mStatus != AudioStatus.RECORDING
                 mBinding.audioFileView.setDeleteAllBtnEnabled(mStatus != AudioStatus.RECORDING)
                 mBinding.pauseBtn.isEnabled = mStatus == AudioStatus.RECORDING

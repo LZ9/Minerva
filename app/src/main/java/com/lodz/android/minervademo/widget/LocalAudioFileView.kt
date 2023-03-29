@@ -17,7 +17,7 @@ import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minervademo.BuildConfig
 import com.lodz.android.minervademo.R
 import com.lodz.android.minervademo.databinding.ViewLocalAudioFileBinding
-import com.lodz.android.minervademo.ui.simple.AudioFilesAdapter
+import com.lodz.android.minervademo.ui.adapter.AudioFilesAdapter
 import com.lodz.android.pandora.rx.subscribe.single.BaseSingleObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout

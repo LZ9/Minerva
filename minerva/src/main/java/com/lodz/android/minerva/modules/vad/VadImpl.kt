@@ -10,7 +10,12 @@ import com.lodz.android.minerva.bean.states.VadDetect
 import com.lodz.android.minerva.modules.BaseMinervaImpl
 import com.konovalov.vad.Vad
 import com.konovalov.vad.VadConfig
+import com.konovalov.vad.VadFrameSizeType
+import com.konovalov.vad.VadMode
+import com.lodz.android.minerva.bean.states.Idle
 import com.lodz.android.minerva.bean.states.Stop
+import com.lodz.android.minerva.contract.MinervaVad
+import com.lodz.android.minerva.utils.VadUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -21,24 +26,23 @@ import kotlinx.coroutines.launch
  * @author zhouL
  * @date 2021/11/10
  */
-class VadImpl : BaseMinervaImpl() {
+open class VadImpl : BaseMinervaImpl(), MinervaVad {
 
-    private var mVad: Vad? = null
+    protected var mVad: Vad? = null
 
-    override fun init(
-        context: Context,
-        sampleRate: Int,
-        channel: Int,
-        encoding: Int,
-        dirPath: String,
-        format: AudioFormats,
-        vadConfig: VadConfig?
-    ) {
-        super.init(context, sampleRate, channel, encoding, dirPath, format, vadConfig)
-        if (vadConfig == null){
-            throw NullPointerException("vadConfig is null")
+    /** 是否保存活动语音 */
+    protected var isSaveActiveVoice = false
+
+    override fun setVadConfig(config: VadConfig) {
+        if (!checkChangeParam()){
+            return
         }
-        mVad = Vad(vadConfig)
+        if (mVad != null) {
+            stop()
+            mVad?.stop()
+            mVad = null
+        }
+        mVad = Vad(config)
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
@@ -62,6 +66,7 @@ class VadImpl : BaseMinervaImpl() {
             audioRecord.release()
             mVad?.stop()
             notifyStates(mRecordingState)
+            mRecordingState = Idle
         }
     }
 
@@ -78,4 +83,43 @@ class VadImpl : BaseMinervaImpl() {
         start()
     }
 
+    override fun changeSampleRate(sampleRate: Int): Boolean {
+        val isChange = super.changeSampleRate(sampleRate)
+        if (isChange) {
+            mVad?.getVadConfig()?.setSampleRate(VadUtils.getVadSampleRate(mSampleRate))
+        }
+        return isChange
+    }
+
+    override fun changeEncoding(encoding: Int): Boolean = false
+
+    override fun changeFrameSizeType(frameSizeType: VadFrameSizeType): Boolean {
+        if (checkChangeParam()) {
+            val sampleRate = VadUtils.getVadSampleRate(mSampleRate)
+            val frameSize = VadUtils.getVadFrameSize(sampleRate, frameSizeType.value)
+            mVad?.getVadConfig()?.setFrameSize(frameSize)
+            return true
+        }
+        return false
+    }
+
+    override fun changeVadMode(mode: VadMode): Boolean {
+        if (checkChangeParam()) {
+            mVad?.getVadConfig()?.setMode(mode)
+            return true
+        }
+        return false
+    }
+
+    override fun changeSaveActiveVoice(isSaveActiveVoice: Boolean): Boolean {
+        if (checkChangeParam()) {
+            this.isSaveActiveVoice = isSaveActiveVoice
+            return true
+        }
+        return false
+    }
+
 }
+
+
+

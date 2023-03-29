@@ -24,6 +24,10 @@ object FileManager {
     private var mDownloadFolderPath = ""
     /** 内容路径 */
     private var mContentFolderPath = ""
+    /** 录音文件路径 */
+    private var mRecordingFolderPath = ""
+    /** 端点检测文件路径 */
+    private var mVadFolderPath = ""
     /** 崩溃日志路径 */
     private var mCrashFolderPath = ""
 
@@ -63,6 +67,8 @@ object FileManager {
         mDownloadFolderPath = mAppFolderPath + "Download" + File.separator// 下载路径
         mContentFolderPath = mAppFolderPath + "Content" + File.separator// 内容路径
         mCrashFolderPath = mAppFolderPath + "Crash" + File.separator// 崩溃日志路径
+        mRecordingFolderPath = mContentFolderPath + "Recording" + File.separator// 录音文件路径
+        mVadFolderPath = mContentFolderPath + "Vad" + File.separator// 端点检测文件路径
     }
 
     /** 初始化文件夹 */
@@ -73,6 +79,8 @@ object FileManager {
             FileUtils.createFolder(mDownloadFolderPath)// 下载路径
             FileUtils.createFolder(mContentFolderPath)// 内容路径
             FileUtils.createFolder(mCrashFolderPath)// 崩溃日志路径
+            FileUtils.createFolder(mRecordingFolderPath)// 录音文件路径
+            FileUtils.createFolder(mVadFolderPath)// 端点检测文件路径
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -97,6 +105,14 @@ object FileManager {
     /** 获取内容路径 */
     @JvmStatic
     fun getContentFolderPath(): String = fixPath(mContentFolderPath)
+
+    /** 获取录音文件路径 */
+    @JvmStatic
+    fun getRecordingFolderPath(): String = fixPath(mRecordingFolderPath)
+
+    /** 获取端点检测文件路径 */
+    @JvmStatic
+    fun getVadFolderPath(): String = fixPath(mVadFolderPath)
 
     /** 获取崩溃日志路径 */
     @JvmStatic

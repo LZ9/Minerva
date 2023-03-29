@@ -6,36 +6,30 @@ import android.view.View
 import com.lodz.android.corekt.anko.toArrayList
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minervademo.bean.DictBean
-import com.lodz.android.minervademo.databinding.DialogConfigBinding
+import com.lodz.android.minervademo.databinding.DialogRecordConfigBinding
 import com.lodz.android.minervademo.enums.Encodings
 import com.lodz.android.minervademo.enums.SampleRates
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
 import com.lodz.android.pandora.widget.dialog.BaseBottomDialog
 
 /**
- * 配置弹框
+ * 录音配置弹框
  * @author zhouL
  * @date 2021/10/21
  */
-class ConfigDialog(context: Context) : BaseBottomDialog(context) {
+class RecordConfigDialog(context: Context) : BaseBottomDialog(context) {
 
     /** 音频格式 */
     private var mAudioFormat: AudioFormats = AudioFormats.WAV
-    /** 音频格式是否可选 */
-    private var mAudioFormatEnable: Boolean = true
     /** 采样率 */
     private var mSampleRate: SampleRates = SampleRates.SAMPLE_RATE_16K
-    /** 采样率是否可选 */
-    private var mSampleRateEnable: Boolean = true
     /** 位宽 */
     private var mEncoding: Encodings = Encodings.BIT_16
-    /** 位宽是否可选 */
-    private var mEncodingEnable: Boolean = true
 
     /** 监听器 */
     private var mListener :OnClickConfirmListener? = null
 
-    private val mBinding : DialogConfigBinding by bindingLayout(DialogConfigBinding::inflate)
+    private val mBinding : DialogRecordConfigBinding by bindingLayout(DialogRecordConfigBinding::inflate)
 
     override fun getViewBindingLayout(): View = mBinding.root
 
@@ -45,17 +39,14 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
         val audioFormatList = createAudioFormatList()
         mBinding.audioFormatCrg.setDataList(audioFormatList.toMutableList())
         mBinding.audioFormatCrg.setSelectedId(mAudioFormat.id.toString())
-        mBinding.audioFormatCrg.isEnabled = mAudioFormatEnable
 
         val sampleRateList = createSampleRateList()
         mBinding.sampleRateCrg.setDataList(sampleRateList.toMutableList())
         mBinding.sampleRateCrg.setSelectedId(mSampleRate.rate.toString())
-        mBinding.sampleRateCrg.isEnabled = mSampleRateEnable
 
         val encodingList = createEncodingList()
         mBinding.encodingCrg.setDataList(encodingList.toMutableList())
         mBinding.encodingCrg.setSelectedId(mEncoding.encoding.toString())
-        mBinding.encodingCrg.isEnabled = mEncodingEnable
     }
 
     override fun setListeners() {
@@ -78,17 +69,6 @@ class ConfigDialog(context: Context) : BaseBottomDialog(context) {
         mAudioFormat = audioFormat
         mSampleRate = sampleRate
         mEncoding = encoding
-    }
-
-    /** 设置是否可选[audioFormatEnable]音频格式，[sampleRateEnable]采样率，[encodingEnable]音频位宽 */
-    fun setSelectEnable(
-        audioFormatEnable: Boolean = true,
-        sampleRateEnable: Boolean = true,
-        encodingEnable: Boolean = true
-    ) {
-        mAudioFormatEnable = audioFormatEnable
-        mSampleRateEnable = sampleRateEnable
-        mEncodingEnable = encodingEnable
     }
 
     /** 创建音频格式列表 */

@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioFormat
 import com.konovalov.vad.VadConfig
 import com.lodz.android.minerva.bean.AudioFormats
+import com.lodz.android.minerva.bean.states.Error
 import com.lodz.android.minerva.bean.states.Idle
 import com.lodz.android.minerva.bean.states.RecordingStates
 import com.lodz.android.minerva.contract.Minerva
@@ -43,9 +44,6 @@ abstract class BaseMinervaImpl : Minerva {
     /** 当前录音状态 */
     protected var mRecordingState: RecordingStates = Idle
 
-    /** 端点检测配置项 */
-    protected var mVadConfig: VadConfig? = null
-
     override fun init(
         context: Context,
         sampleRate: Int,
@@ -53,7 +51,6 @@ abstract class BaseMinervaImpl : Minerva {
         encoding: Int,
         dirPath: String,
         format: AudioFormats,
-        vadConfig: VadConfig?
     ) {
         mContext = context
         mSampleRate = sampleRate
@@ -61,19 +58,30 @@ abstract class BaseMinervaImpl : Minerva {
         mEncoding = encoding
         mSaveDirPath = dirPath
         mRecordingFormat = format
-        mVadConfig = vadConfig
     }
 
-    override fun changeSampleRate(sampleRate: Int) {
-        mSampleRate = sampleRate
+    override fun changeSampleRate(sampleRate: Int): Boolean {
+        if (checkChangeParam()){
+            mSampleRate = sampleRate
+            return true
+        }
+        return false
     }
 
-    override fun changeEncoding(encoding: Int) {
-        mEncoding = encoding
+    override fun changeEncoding(encoding: Int): Boolean {
+        if (checkChangeParam()) {
+            mEncoding = encoding
+            return true
+        }
+        return false
     }
 
-    override fun changeAudioFormat(format: AudioFormats) {
-        mRecordingFormat = format
+    override fun changeAudioFormat(format: AudioFormats): Boolean {
+        if (checkChangeParam()){
+            mRecordingFormat = format
+            return true
+        }
+        return false
     }
 
     override fun setOnRecordingStatesListener(listener: OnRecordingStatesListener?) {
@@ -92,5 +100,14 @@ abstract class BaseMinervaImpl : Minerva {
         if (!file.isDirectory){
             file.mkdirs()
         }
+    }
+
+    /** 校验是否允许更改参数 */
+    protected fun checkChangeParam(): Boolean {
+        if (mRecordingState != Idle) {
+            notifyStates(Error(RuntimeException(), "audio is working , you cannot change"))
+            return false
+        }
+        return true
     }
 }

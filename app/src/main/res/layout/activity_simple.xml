@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.lodz.android.minervademo.widget.ParamView
+    <com.lodz.android.minervademo.widget.RecordParamView
         android:id="@+id/param_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

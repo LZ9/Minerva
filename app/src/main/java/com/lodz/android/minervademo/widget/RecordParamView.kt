@@ -7,11 +7,11 @@ import com.lodz.android.corekt.anko.append
 import com.lodz.android.corekt.anko.toastShort
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minervademo.R
-import com.lodz.android.minervademo.databinding.ViewParamBinding
+import com.lodz.android.minervademo.databinding.ViewRecordParamBinding
 import com.lodz.android.minervademo.enums.AudioStatus
 import com.lodz.android.minervademo.enums.Encodings
 import com.lodz.android.minervademo.enums.SampleRates
-import com.lodz.android.minervademo.ui.dialog.ConfigDialog
+import com.lodz.android.minervademo.ui.dialog.RecordConfigDialog
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
 
 /**
@@ -19,9 +19,9 @@ import com.lodz.android.pandora.utils.viewbinding.bindingLayout
  * @author zhouL
  * @date 2023/2/15
  */
-class ParamView :FrameLayout{
+class RecordParamView :FrameLayout{
 
-    private val mBinding: ViewParamBinding by context.bindingLayout(ViewParamBinding::inflate)
+    private val mBinding: ViewRecordParamBinding by context.bindingLayout(ViewRecordParamBinding::inflate)
 
     /** 音频状态 */
     private var mStatus: AudioStatus = AudioStatus.IDLE
@@ -57,7 +57,7 @@ class ParamView :FrameLayout{
     }
 
     private fun findViews() {
-        setStatusText(mStatus.text)
+        setStatus(mStatus)
         setSoundSizeText("")
         setAudioFormatText(mAudioFormat.suffix)
         setSampleRateText(mSampleRate.text)
@@ -75,8 +75,9 @@ class ParamView :FrameLayout{
     }
 
     /** 设置录音状态 */
-    fun setStatusText(text: String = "") {
-        mBinding.statusTv.text = context.getString(R.string.simple_status).append(text)
+    fun setStatus(status: AudioStatus) {
+        mStatus = status
+        mBinding.statusTv.text = context.getString(R.string.simple_status).append(status.text)
     }
 
     /** 设置当前分贝 */
@@ -113,7 +114,7 @@ class ParamView :FrameLayout{
 
     /** 显示配置弹框 */
     private fun showConfigDialog() {
-        val dialog = ConfigDialog(context)
+        val dialog = RecordConfigDialog(context)
         dialog.setData(mAudioFormat, mSampleRate, mEncoding)
         dialog.setOnClickConfirmListener { dif, audioFormat, sampleRate, encoding ->
             mAudioFormat = audioFormat
