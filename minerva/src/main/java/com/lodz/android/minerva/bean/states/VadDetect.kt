@@ -5,4 +5,4 @@ package com.lodz.android.minerva.bean.states
  * @author zhouL
  * @date 2022/11/10
  */
-class VadDetect(data: ShortArray?, end: Int, val isSpeech: Boolean) : Recording(data, end)
+open class VadDetect(data: ShortArray?, end: Int, val isSpeech: Boolean) : Recording(data, end)

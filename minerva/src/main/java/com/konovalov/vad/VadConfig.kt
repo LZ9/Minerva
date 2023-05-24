@@ -18,16 +18,19 @@ class VadConfig private constructor() {
     var silenceDurationMillis = 500
 
 
+    /** 设置采样率[sampleRate] */
     fun setSampleRate(sampleRate: VadSampleRate): VadConfig {
         this.sampleRate = sampleRate
         return this
     }
 
+    /** 设置端点检测模式[mode] */
     fun setMode(mode: VadMode): VadConfig {
         this.mode = mode
         return this
     }
 
+    /** 设置端点检测帧大小[frameSize] */
     fun setFrameSize(frameSize: VadFrameSize): VadConfig {
         this.frameSize = frameSize
         return this

@@ -3,6 +3,7 @@ package com.lodz.android.minerva.contract
 import com.konovalov.vad.VadConfig
 import com.konovalov.vad.VadFrameSizeType
 import com.konovalov.vad.VadMode
+import com.lodz.android.minerva.modules.vad.VadSpeechInterceptor
 
 /**
  * 端点检测控制器
@@ -22,4 +23,7 @@ interface MinervaVad : Minerva {
 
     /** 改变是否保存语音[isSaveActiveVoice] */
     fun changeSaveActiveVoice(isSaveActiveVoice: Boolean): Boolean
+
+    /** 设置端点检测话音判断拦截器[interceptor] */
+    fun setVadInterceptor(interceptor : VadSpeechInterceptor?)
 }

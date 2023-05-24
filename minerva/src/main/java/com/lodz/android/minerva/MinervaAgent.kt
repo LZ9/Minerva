@@ -102,6 +102,9 @@ class MinervaAgent private constructor() {
         if (mEncoding != AudioFormat.ENCODING_PCM_16BIT){
             throw IllegalArgumentException("vad only support 16bit")
         }
+        if (mRecordingFormat == AudioFormats.MP3){
+            throw IllegalArgumentException("vad only support wav or pcm")
+        }
         val sampleRate = VadUtils.getVadSampleRate(mSampleRate)
         val frameSize = VadUtils.getVadFrameSize(sampleRate, frameSizeType.value)
 
@@ -115,7 +118,5 @@ class MinervaAgent private constructor() {
         audio.changeSaveActiveVoice(isSaveActivityVoice)
         return audio
     }
-
-
 
 }

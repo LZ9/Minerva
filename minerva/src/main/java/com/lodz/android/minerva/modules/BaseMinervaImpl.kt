@@ -110,4 +110,32 @@ abstract class BaseMinervaImpl : Minerva {
         }
         return true
     }
+
+    /** 转换声道参数 */
+    protected fun getChannel(): Short = when (mChannel) {
+        AudioFormat.CHANNEL_IN_MONO -> 1
+        AudioFormat.CHANNEL_IN_STEREO -> 2
+        else -> 0
+    }
+
+    /** 转换位宽编码参数 */
+    protected fun getEncoding(): Short = when (mEncoding) {
+        AudioFormat.ENCODING_PCM_8BIT -> 8
+        AudioFormat.ENCODING_PCM_16BIT -> 16
+        else -> 0
+    }
+
+    /** 转换位宽编码参数 */
+    fun renameFile(file: File?, newName: String): File? {
+        val replaceName = newName.replace(" ", "", true)//去掉新名称中的空格
+        if (file == null || !file.exists()) {//文件为空或者文件不存在
+            return null
+        }
+        if (newName == file.name) {// 新名称与旧名称一致
+            return null
+        }
+        val parentPath = file.parent ?: return null
+        val newFile = File(parentPath + File.separator + replaceName)
+        return if (file.renameTo(newFile)) newFile else null
+    }
 }

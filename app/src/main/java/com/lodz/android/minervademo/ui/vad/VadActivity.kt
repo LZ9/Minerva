@@ -116,7 +116,7 @@ class VadActivity : BaseRefreshActivity() {
             .setSampleRate(mSampleRate.value)
             .setEncoding(Encodings.BIT_16.encoding)
             .setAudioFormat(AudioFormats.WAV)
-            .setSaveDirPath(FileManager.getContentFolderPath())
+            .setSaveDirPath(FileManager.getVadFolderPath())
             .setOnRecordingStatesListener{
                 when (it) {
                     is Idle -> {
@@ -135,7 +135,9 @@ class VadActivity : BaseRefreshActivity() {
                     is Stop -> {
                         mStatus = AudioStatus.IDLE
                     }
-                    is Finish -> {
+                    is VadFileSave -> {
+                        toastShort(it.file.absolutePath)
+                        mBinding.audioFileView.updateAudioFileList()
                         mStatus = AudioStatus.IDLE
                     }
                     is Error -> {

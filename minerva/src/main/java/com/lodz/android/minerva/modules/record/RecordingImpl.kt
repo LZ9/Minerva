@@ -207,16 +207,4 @@ open class RecordingImpl : BaseMinervaImpl() {
         }
         files.clear()
     }
-
-    protected fun getChannel(): Short = when (mChannel) {
-        AudioFormat.CHANNEL_IN_MONO -> 1
-        AudioFormat.CHANNEL_IN_STEREO -> 2
-        else -> 0
-    }
-
-    protected fun getEncoding(): Short = when (mEncoding) {
-        AudioFormat.ENCODING_PCM_8BIT -> 8
-        AudioFormat.ENCODING_PCM_16BIT -> 16
-        else -> 0
-    }
 }

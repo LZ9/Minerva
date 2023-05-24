@@ -3,8 +3,8 @@ package com.lodz.android.minerva.bean.states
 import java.io.File
 
 /**
- * 录音状态 - 录音流程结束（或转换结束）
+ * 端点检测语音文件保存
  * @author zhouL
  * @date 2022/11/10
  */
-open class Finish(val file: File) : RecordingStates()
+open class VadFileSave(val file: File) : RecordingStates()
