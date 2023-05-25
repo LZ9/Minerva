@@ -124,9 +124,7 @@ class VadActivity : BaseRefreshActivity() {
                     }
                     is VadDetect -> {
                         mStatus = AudioStatus.VAD_DETECT
-                        val data = it.data
-                        val db = if (data == null) 0 else RecordUtils.getDbFor16Bit(data, it.end)
-                        mBinding.vadParamView.setSoundSizeText("$db db")
+                        mBinding.vadParamView.setSoundSizeText("${it.db} db")
                         mBinding.vadParamView.setVadResultText(it.isSpeech.toString())
                     }
                     is Pause -> {

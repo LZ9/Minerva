@@ -110,9 +110,12 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
     /** 创建音频格式列表 */
     private fun createAudioFormatList(): ArrayList<DictBean> {
         val list = ArrayList<DictBean>()
-        enumValues<AudioFormats>().toArrayList().forEach {
-            list.add(DictBean(it.id, it.suffix))
-        }
+        enumValues<AudioFormats>().toArrayList()
+            .filter {
+                it != AudioFormats.MP3
+            }.forEach {
+                list.add(DictBean(it.id, it.suffix))
+            }
         return list
     }
 

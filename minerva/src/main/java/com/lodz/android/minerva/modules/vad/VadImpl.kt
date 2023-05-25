@@ -22,6 +22,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.IllegalArgumentException
 import java.util.*
 
 
@@ -34,7 +35,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
 
     companion object{
         /** 缓存音频数量 */
-        const val CACHE_SIZE = 35
+        const val CACHE_SIZE = 15
         /** 停顿次数 */
         const val SILENCE_SIZE = 5
         /** 文件最小大小 */
@@ -66,7 +67,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
             Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 重置为空闲")
             mRecordingState = Idle
         }
-        if (isSaveActiveVoice){
+        if (isSaveActiveVoice) {
             checkSaveDirPath()// 如果需要保存活动语音先校验存储目录
         }
         startVad(isSaveActiveVoice, mSampleRate, mChannel, mEncoding, mRecordingFormat)
@@ -78,7 +79,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         mVad?.start()
         val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channel, encoding)
         val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channel, encoding, bufferSize)
-        mRecordingState = VadDetect(null, -1, false)
+        mRecordingState = VadDetect(null, -1, -1.0, false)
         notifyStates(mRecordingState)
         audioRecord.startRecording()
         val buffer = ShortArray(bufferSize)
@@ -94,7 +95,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         } else {
             vadOnly(audioRecord, buffer)
         }
-        notifyStates(VadDetect(null, -1, false))
+        notifyStates(VadDetect(null, -1, -1.0, false))
         audioRecord.stop()
         audioRecord.release()
         mVad?.stop()
@@ -109,7 +110,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         while (mRecordingState is VadDetect) {
             val vad = mVad ?: throw NullPointerException("vad is null")
             val end = audioRecord.read(buffer, 0, buffer.size)
-            notifyStates(VadDetect(buffer, end, interceptor.isSpeech(vad, buffer)))
+            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), interceptor.isSpeech(vad, buffer)))
         }
     }
 
@@ -132,6 +133,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
             System.arraycopy(buffer, 0, cacheBuffer, 0, buffer.size)
             cacheQueue.offer(cacheBuffer)
             val isSpeech = interceptor.isSpeech(vad, buffer)
+            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), isSpeech))
 
             if (!isTalk) {// 未在说话状态
                 Log.d(TAG, "语音检测结果：$isSpeech")
@@ -205,6 +207,14 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun resume() {
         start()
+    }
+
+    override fun changeAudioFormat(format: AudioFormats): Boolean {
+        if (format == AudioFormats.MP3) {
+            notifyStates(Error(IllegalArgumentException(), "vad only support wav or pcm"))
+            return false
+        }
+        return super.changeAudioFormat(format)
     }
 
     override fun changeSampleRate(sampleRate: Int): Boolean {
