@@ -8,5 +8,5 @@ import com.konovalov.vad.Vad
  * @date 2023/4/19
  */
 class VadOnlyInterceptor : VadSpeechInterceptor {
-    override fun isSpeech(vad: Vad, buffer: ShortArray): Boolean = vad.isSpeech(buffer)
+    override fun isSpeech(vad: Vad, buffer: ShortArray, end: Int): Boolean = vad.isSpeech(buffer)
 }

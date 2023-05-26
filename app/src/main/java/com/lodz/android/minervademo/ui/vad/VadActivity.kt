@@ -149,6 +149,10 @@ class VadActivity : BaseRefreshActivity() {
                 mBinding.audioFileView.setDeleteAllBtnEnabled(mStatus != AudioStatus.VAD_DETECT)
             }
             .buildVad(getContext(), isSaveActiveVoice, mFrameSizeType, mVadMode)
+            .setVadInterceptor { vad, buffer, end ->
+                val db = RecordUtils.getDbFor16Bit(buffer, end)
+                return@setVadInterceptor vad.isSpeech(buffer) && db > 40//端点检测识别成功且声音大于40分贝再响应
+            }
     }
 
 

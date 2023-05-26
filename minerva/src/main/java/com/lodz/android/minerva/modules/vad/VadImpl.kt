@@ -35,11 +35,11 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
 
     companion object{
         /** 缓存音频数量 */
-        const val CACHE_SIZE = 15
-        /** 停顿次数 */
-        const val SILENCE_SIZE = 5
+        const val CACHE_COUNT = 10
+        /** 停顿长度阈值 */
+        const val SILENCE_VALUE= 4
         /** 文件最小大小 */
-        const val FILE_MIN_SIZE = 70 * 1024
+        const val FILE_MIN_SIZE = 35 * 1024
     }
 
     protected var mVad: Vad? = null
@@ -48,6 +48,13 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
     protected var isSaveActiveVoice = false
     /** 端点检测话音判断拦截器 */
     protected var mVadSpeechInterceptor: VadSpeechInterceptor? = null
+    /** 文件大小最小值 */
+    protected var mFileMinSize = FILE_MIN_SIZE.toLong()
+    /** 停顿长度阈值 */
+    protected var mSilenceValue = SILENCE_VALUE
+    /** 缓存音频数量 */
+    protected var mCacheCount = CACHE_COUNT
+
 
     override fun setVadConfig(config: VadConfig) {
         if (!checkChangeParam()){
@@ -110,7 +117,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         while (mRecordingState is VadDetect) {
             val vad = mVad ?: throw NullPointerException("vad is null")
             val end = audioRecord.read(buffer, 0, buffer.size)
-            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), interceptor.isSpeech(vad, buffer)))
+            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), interceptor.isSpeech(vad, buffer, end)))
         }
     }
 
@@ -125,14 +132,14 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         val cacheQueue: Queue<ShortArray> = LinkedList() //录音流缓存
         while (mRecordingState is VadDetect) {
             val vad = mVad ?: throw NullPointerException("vad is null")
-            if (cacheQueue.size > CACHE_SIZE){
+            if (cacheQueue.size > mCacheCount){
                 cacheQueue.poll()//抛弃超出缓存个数的音频流
             }
             val end = audioRecord.read(buffer, 0, buffer.size)
             val cacheBuffer = ShortArray(bufferSize)
             System.arraycopy(buffer, 0, cacheBuffer, 0, buffer.size)
             cacheQueue.offer(cacheBuffer)
-            val isSpeech = interceptor.isSpeech(vad, buffer)
+            val isSpeech = interceptor.isSpeech(vad, buffer, end)
             notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), isSpeech))
 
             if (!isTalk) {// 未在说话状态
@@ -155,7 +162,7 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
             cacheData.forEach {
                 fos?.write(it.toByteArray())
             }
-            if (silentLinkQueue.size >= SILENCE_SIZE) {//停顿时间过长则认为语音活动结束
+            if (silentLinkQueue.size >= mSilenceValue) {//停顿时间过长则认为语音活动结束
                 while (cacheQueue.size > 0) {
                     cacheQueue.poll()?.forEach {
                         fos?.write(it.toByteArray())
@@ -167,9 +174,10 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
                 Log.i(TAG, "结束说话")
                 if (file != null) {
                     val fileSize = file.length()
-                    if (fileSize <= FILE_MIN_SIZE){//文件小于指定大小
+                    if (fileSize <= mFileMinSize){//文件小于指定大小
                         file.delete()
                         Log.d(TAG, "文件大小小于默认值，可能是杂音，删除文件")
+                        notifyStates(Error(IllegalStateException(), "file size is smaller than the default value , delete it"))
                     } else {
                         if (mRecordingFormat == AudioFormats.WAV) {
                             file = makeWav(file)
@@ -253,8 +261,33 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         return false
     }
 
-    override fun setVadInterceptor(interceptor: VadSpeechInterceptor?) {
+    override fun changeFileMinSize(size: Long): Boolean {
+        if (checkChangeParam()) {
+            mFileMinSize = size
+            return true
+        }
+        return false
+    }
+
+    override fun changeSilenceValue(value: Int): Boolean {
+        if (checkChangeParam()) {
+            mSilenceValue = value
+            return true
+        }
+        return false
+    }
+
+    override fun changeCacheCount(count: Int): Boolean {
+        if (checkChangeParam()) {
+            mCacheCount = count
+            return true
+        }
+        return false
+    }
+
+    override fun setVadInterceptor(interceptor: VadSpeechInterceptor?): MinervaVad {
         mVadSpeechInterceptor = interceptor
+        return this
     }
 
 }
