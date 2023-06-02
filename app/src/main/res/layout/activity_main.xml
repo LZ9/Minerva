@@ -12,13 +12,6 @@
         android:text="@string/main_simple" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/service_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/main_service" />
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/vad_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

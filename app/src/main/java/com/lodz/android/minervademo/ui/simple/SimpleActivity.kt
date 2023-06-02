@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.lodz.android.corekt.anko.*
-import com.lodz.android.minerva.MinervaAgent
+import com.lodz.android.minerva.agent.MinervaAgent
 import com.lodz.android.minerva.contract.Minerva
 import com.lodz.android.minerva.bean.AudioFormats
 import com.lodz.android.minerva.bean.states.*
@@ -115,7 +115,7 @@ class SimpleActivity : BaseRefreshActivity() {
     }
 
     private fun initMinerva() {
-        mMinerva = MinervaAgent.create()
+        mMinerva = MinervaAgent.record()
             .setChannel(AudioFormat.CHANNEL_IN_MONO)
             .setSampleRate(mSampleRate.rate)
             .setEncoding(mEncoding.encoding)
@@ -165,7 +165,7 @@ class SimpleActivity : BaseRefreshActivity() {
                 mBinding.audioFileView.setDeleteAllBtnEnabled(mStatus != AudioStatus.RECORDING)
                 mBinding.pauseBtn.isEnabled = mStatus == AudioStatus.RECORDING
             }
-            .buildRecording(getContext())
+            .build(getContext())
     }
 
 }

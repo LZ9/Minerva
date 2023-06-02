@@ -233,7 +233,10 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         return isChange
     }
 
-    override fun changeEncoding(encoding: Int): Boolean = false
+    override fun changeEncoding(encoding: Int): Boolean {
+        notifyStates(Error(RuntimeException(), "vad only support 16bit"))
+        return false
+    }
 
     override fun changeFrameSizeType(frameSizeType: VadFrameSizeType): Boolean {
         if (checkChangeParam()) {

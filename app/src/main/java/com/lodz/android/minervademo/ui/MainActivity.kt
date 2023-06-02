@@ -80,10 +80,6 @@ class MainActivity :BaseActivity(){
             SimpleActivity.start(getContext())
         }
 
-        mBinding.serviceBtn.setOnClickListener {
-
-        }
-
         mBinding.vadBtn.setOnClickListener {
             VadActivity.start(getContext())
         }

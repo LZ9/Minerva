@@ -28,8 +28,6 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
     private var mAudioFormat: AudioFormats = AudioFormats.WAV
     /** 采样率 */
     private var mSampleRate: VadSampleRate = VadSampleRate.SAMPLE_RATE_16K
-    /** 位宽 */
-    private var mEncoding: Encodings = Encodings.BIT_16
     /** 帧大小类型 */
     private var mFrameSizeType: VadFrameSizeType = VadFrameSizeType.SMALL
     /** 检测模式 */
@@ -57,7 +55,7 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
 
         val encodingList = createEncodingList()
         mBinding.encodingCrg.setDataList(encodingList.toMutableList())
-        mBinding.encodingCrg.setSelectedId(mEncoding.encoding.toString())
+        mBinding.encodingCrg.setSelectedId(Encodings.BIT_16.encoding.toString())
 
         val frameSizeTypeList = createFrameSizeTypeList()
         mBinding.frameSizeCrg.setDataList(frameSizeTypeList.toMutableList())
@@ -82,11 +80,10 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
         mBinding.okBtn.setOnClickListener {
             mAudioFormat = getSelectedAudioFormat(mBinding.audioFormatCrg.getSelectedId()[0])
             mSampleRate = getSelectedSampleRate(mBinding.sampleRateCrg.getSelectedId()[0])
-            mEncoding = getSelectedEncoding(mBinding.encodingCrg.getSelectedId()[0])
             mFrameSizeType = getSelectedFrameSizeType(mBinding.frameSizeCrg.getSelectedId()[0])
             mVadMode = getSelectedVadMode(mBinding.modeCrg.getSelectedId()[0])
             isSaveActiveVoice = toBoolean(mBinding.saveAudioCrg.getSelectedId()[0].toInt())
-            mListener?.onClick(getDialogInterface(), mAudioFormat, mSampleRate, mEncoding, mFrameSizeType, mVadMode, isSaveActiveVoice)
+            mListener?.onClick(getDialogInterface(), mAudioFormat, mSampleRate, mFrameSizeType, mVadMode, isSaveActiveVoice)
         }
     }
 
@@ -94,14 +91,12 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
     fun setData(
         audioFormat: AudioFormats,
         sampleRate: VadSampleRate,
-        encoding: Encodings,
         fameSizeType: VadFrameSizeType,
         vadMode: VadMode,
         isSaveActiveVoice: Boolean
     ) {
         mAudioFormat = audioFormat
         mSampleRate = sampleRate
-        mEncoding = encoding
         mFrameSizeType = fameSizeType
         mVadMode = vadMode
         this.isSaveActiveVoice = isSaveActiveVoice
@@ -226,7 +221,6 @@ class VadConfigDialog(context: Context) : BaseBottomDialog(context) {
             dif: DialogInterface,
             audioFormat: AudioFormats,
             sampleRate: VadSampleRate,
-            encoding: Encodings,
             frameSizeType: VadFrameSizeType,
             vadMode: VadMode,
             isSaveActiveVoice: Boolean

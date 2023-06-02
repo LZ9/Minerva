@@ -34,8 +34,6 @@ class VadParamView :FrameLayout{
     private var mAudioFormat: AudioFormats = AudioFormats.WAV
     /** 端点检测采样率 */
     private var mSampleRate: VadSampleRate = VadSampleRate.SAMPLE_RATE_16K
-    /** 位宽 */
-    private var mEncoding: Encodings = Encodings.BIT_16
     /** 帧大小类型 */
     private var mFrameSizeType: VadFrameSizeType = VadFrameSizeType.SMALL
     /** 检测模式 */
@@ -74,7 +72,7 @@ class VadParamView :FrameLayout{
         setSaveActiveVoiceText(isSaveActiveVoice.toString())
         setAudioFormatText(mAudioFormat.suffix)
         setSampleRateText(mSampleRate.value.toString().append("Hz"))
-        setEncodingText(mEncoding.text)
+        setEncodingText(Encodings.BIT_16.text)
         setFrameSizeTypeText(mFrameSizeType.name.lowercase())
         setVadModeText(mVadMode.name.lowercase())
     }
@@ -144,9 +142,6 @@ class VadParamView :FrameLayout{
     /** 获取端点检测采样率*/
     fun getSampleRate(): VadSampleRate = mSampleRate
 
-    /** 获取位宽 */
-    fun getEncoding(): Encodings = mEncoding
-
     /** 获取帧大小类型 */
     fun getVadFrameSizeType(): VadFrameSizeType = mFrameSizeType
 
@@ -159,16 +154,15 @@ class VadParamView :FrameLayout{
     /** 显示配置弹框 */
     private fun showConfigDialog() {
         val dialog = VadConfigDialog(context)
-        dialog.setData(mAudioFormat, mSampleRate, mEncoding, mFrameSizeType, mVadMode, isSaveActiveVoice)
-        dialog.setOnClickConfirmListener { dif, audioFormat, sampleRate, encoding, frameSizeType, vadMode, isSaveActiveVoice ->
+        dialog.setData(mAudioFormat, mSampleRate, mFrameSizeType, mVadMode, isSaveActiveVoice)
+        dialog.setOnClickConfirmListener { dif, audioFormat, sampleRate, frameSizeType, vadMode, isSaveActiveVoice ->
             mAudioFormat = audioFormat
             mSampleRate = sampleRate
-            mEncoding = encoding
             mFrameSizeType = frameSizeType
             mVadMode = vadMode
             this.isSaveActiveVoice = isSaveActiveVoice
             findViews()
-            mListener?.onChanged(mAudioFormat, mSampleRate, mEncoding, mFrameSizeType, mVadMode, this.isSaveActiveVoice)
+            mListener?.onChanged(mAudioFormat, mSampleRate, mFrameSizeType, mVadMode, this.isSaveActiveVoice)
             dif.dismiss()
         }
         dialog.show()
@@ -182,7 +176,6 @@ class VadParamView :FrameLayout{
         fun onChanged(
             audioFormat: AudioFormats,
             sampleRate: VadSampleRate,
-            encoding: Encodings,
             frameSizeType: VadFrameSizeType,
             vadMode: VadMode,
             isSaveActiveVoice: Boolean

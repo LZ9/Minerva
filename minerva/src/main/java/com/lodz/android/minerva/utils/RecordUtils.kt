@@ -1,7 +1,6 @@
 package com.lodz.android.minerva.utils
 
 import com.lodz.android.minerva.bean.AudioFormats
-import com.lodz.android.minerva.fftlib.FFT
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.text.SimpleDateFormat
@@ -56,12 +55,5 @@ object RecordUtils {
         val shorts = ShortArray(data.size / 2)
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts)
         return shorts
-    }
-
-    /** 获取傅里叶转换后的录音数据流 */
-    fun getFFT(data: ByteArray): ByteArray {
-        val doubles = ByteUtil.toHardDouble(bytesToShort(data))
-        val fft = FFT.fft(doubles, 0)
-        return ByteUtil.toSoftBytes(fft)
     }
 }
