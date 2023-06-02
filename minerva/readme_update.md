@@ -8,6 +8,6 @@
 
 
 ## 扩展
-- [回到顶部](https://github.com/LZ9/Conjurer/blob/master/conjurer/readme_update.md)
+- [回到顶部](https://github.com/LZ9/Minerva/blob/master/minerva/readme_update.md)
 - [Conjurer 主页](https://github.com/LZ9/Minerva)
 
