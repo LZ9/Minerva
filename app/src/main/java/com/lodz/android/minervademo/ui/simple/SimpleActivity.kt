@@ -111,7 +111,7 @@ class SimpleActivity : BaseRefreshActivity() {
     }
 
     private fun initMinerva() {
-        mMinerva = MinervaAgent.record()
+        mMinerva = MinervaAgent.recording()
             .setChannel(AudioFormat.CHANNEL_IN_MONO)
             .setSampleRate(mSampleRate.rate)
             .setEncoding(mEncoding.encoding)

@@ -8,7 +8,7 @@ package com.lodz.android.minerva.agent
 object MinervaAgent {
 
     /** 录音 */
-    fun record() = RecordAgent()
+    fun recording() = RecordingAgent()
 
     /** 端点检测 */
     fun vad() = VadAgent()

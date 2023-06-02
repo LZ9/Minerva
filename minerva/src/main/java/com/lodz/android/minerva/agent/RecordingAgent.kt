@@ -13,7 +13,7 @@ import java.io.File
  * @author zhouL
  * @date 2023/6/1
  */
-class RecordAgent {
+class RecordingAgent {
 
     /** 采样率 */
     private var mSampleRate = 16000
@@ -32,27 +32,27 @@ class RecordAgent {
      * 一般常见采样率为：8000（低质量），16000（普通质量语音），32000（较高质量语音），44100（CD质量），48000（数字音频）
      * 默认16000
      * */
-    fun setSampleRate(sampleRate: Int): RecordAgent = this.apply {
+    fun setSampleRate(sampleRate: Int): RecordingAgent = this.apply {
         this.mSampleRate = sampleRate
     }
 
     /** 设置声道[channel]，默认为：AudioFormat.CHANNEL_IN_MONO */
-    fun setChannel(channel: Int): RecordAgent = this.apply {
+    fun setChannel(channel: Int): RecordingAgent = this.apply {
         this.mChannel = channel
     }
 
     /** 设置位宽编码[encoding]，默认为：AudioFormat.ENCODING_PCM_16BIT */
-    fun setEncoding(encoding: Int): RecordAgent = this.apply {
+    fun setEncoding(encoding: Int): RecordingAgent = this.apply {
         this.mEncoding = encoding
     }
 
     /** 设置音频存储路径[dirPath] */
-    fun setSaveDirPath(dirPath: String): RecordAgent = this.apply {
+    fun setSaveDirPath(dirPath: String): RecordingAgent = this.apply {
         this.mSaveDirPath = dirPath
     }
 
     /** 设置录音文件格式[format] */
-    fun setAudioFormat(format: AudioFormats): RecordAgent = this.apply {
+    fun setAudioFormat(format: AudioFormats): RecordingAgent = this.apply {
         this.mRecordingFormat = format
     }
 
