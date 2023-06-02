@@ -8,8 +8,7 @@
     <string name="main_check_permission_confirm">已确认</string>
     <string name="main_check_permission_unconfirmed">再次确认</string>
     <string name="main_check_permission_cancel">请在设置中打开权限后重启应用</string>
-    <string name="main_simple">基础实现</string>
-    <string name="main_service">服务实现</string>
+    <string name="main_simple">录音实现</string>
     <string name="main_vad">端点检测</string>
 
     <string name="simple_config_title">配置参数</string>
