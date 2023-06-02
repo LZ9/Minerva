@@ -38,6 +38,12 @@ class VadAgent {
     private var  mVadMode: VadMode = VadMode.VERY_AGGRESSIVE
     /** 端点检测话音判断拦截器 */
     private var mVadSpeechInterceptor: VadSpeechInterceptor? = null
+    /** 文件大小最小值 */
+    private var mFileMinSize = 0L
+    /** 停顿长度阈值 */
+    private var mSilenceValue = 0
+    /** 缓存音频数量 */
+    private var mCacheCount = 0
 
     /** 设置采样率[sampleRate]，
      * 一般常见采样率为：8000（低质量），16000（普通质量语音），32000（较高质量语音），44100（CD质量），48000（数字音频）
@@ -87,6 +93,21 @@ class VadAgent {
         mVadSpeechInterceptor = interceptor
     }
 
+    /** 改变文件大小最小判断值[size] */
+    fun setFileMinSize(size: Long) = this.apply {
+        mFileMinSize = size
+    }
+
+    /** 改变停顿长度阈值[value] */
+    fun setSilenceValue(value: Int) = this.apply {
+        mSilenceValue = value
+    }
+
+    /** 改变语言存储开始前的缓存声音数量[count] */
+    fun setCacheCount(count: Int) = this.apply {
+        mCacheCount = count
+    }
+
     /** 完成端点检测构建， 上下文[context] */
     fun build(context: Context): MinervaVad {
         val audio = VadImpl()
@@ -101,7 +122,6 @@ class VadAgent {
         }
         val sampleRate = VadUtils.getVadSampleRate(mSampleRate)
         val frameSize = VadUtils.getVadFrameSize(sampleRate, mFrameSizeType.value)
-
         val config = VadConfig.create()
             .setSampleRate(sampleRate)
             .setFrameSize(frameSize)
@@ -111,6 +131,15 @@ class VadAgent {
         audio.setOnRecordingStatesListener(mOnRecordingStateListener)
         audio.changeSaveActiveVoice(isSaveActivityVoice)
         audio.setVadInterceptor(mVadSpeechInterceptor)
+        if (mFileMinSize > 0L){
+            audio.changeFileMinSize(mFileMinSize)
+        }
+        if (mSilenceValue > 0){
+            audio.changeSilenceValue(mSilenceValue)
+        }
+        if (mCacheCount > 0){
+            audio.changeCacheCount(mCacheCount)
+        }
         return audio
     }
 }

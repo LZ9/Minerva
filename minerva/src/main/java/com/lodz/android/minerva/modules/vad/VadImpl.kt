@@ -117,7 +117,8 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         while (mRecordingState is VadDetect) {
             val vad = mVad ?: throw NullPointerException("vad is null")
             val end = audioRecord.read(buffer, 0, buffer.size)
-            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), interceptor.isSpeech(vad, buffer, end)))
+            val db = RecordUtils.getDbFor16Bit(buffer, end)
+            notifyStates(VadDetect(buffer, end, db, interceptor.isSpeech(vad, buffer, end, db)))
         }
     }
 
@@ -139,8 +140,9 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
             val cacheBuffer = ShortArray(bufferSize)
             System.arraycopy(buffer, 0, cacheBuffer, 0, buffer.size)
             cacheQueue.offer(cacheBuffer)
-            val isSpeech = interceptor.isSpeech(vad, buffer, end)
-            notifyStates(VadDetect(buffer, end, RecordUtils.getDbFor16Bit(buffer, end), isSpeech))
+            val db = RecordUtils.getDbFor16Bit(buffer, end)
+            val isSpeech = interceptor.isSpeech(vad, buffer, end, db)
+            notifyStates(VadDetect(buffer, end, db, isSpeech))
 
             if (!isTalk) {// 未在说话状态
                 Log.d(TAG, "语音检测结果：$isSpeech")

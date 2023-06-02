@@ -114,9 +114,8 @@ class VadActivity : BaseRefreshActivity() {
             .setSaveActivityVoice(isSaveActiveVoice)
             .setFrameSizeType(mFrameSizeType)
             .setVadMode(mVadMode)
-            .setVadInterceptor { vad, buffer, end ->
-                val db = RecordUtils.getDbFor16Bit(buffer, end)
-                vad.isSpeech(buffer) && db > 40//端点检测识别成功且声音大于40分贝再响应
+            .setVadInterceptor { vad, buffer, end, db ->
+                vad.isSpeech(buffer) && db > 40 //端点检测识别成功且声音大于40分贝再响应
             }
             .setOnRecordingStatesListener{
                 when (it) {
@@ -127,9 +126,6 @@ class VadActivity : BaseRefreshActivity() {
                         mStatus = AudioStatus.VAD_DETECT
                         mBinding.vadParamView.setSoundSizeText("${it.db} db")
                         mBinding.vadParamView.setVadResultText(it.isSpeech.toString())
-                    }
-                    is Pause -> {
-                        mStatus = AudioStatus.PAUSE
                     }
                     is Stop -> {
                         mStatus = AudioStatus.IDLE
