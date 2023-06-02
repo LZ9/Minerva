@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
 }
+//apply from: 'publish.gradle'
 
 android {
     compileSdk 33
@@ -10,7 +11,7 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.0"// 已上传
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -33,5 +34,5 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.6.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
 }
