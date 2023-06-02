@@ -31,6 +31,19 @@ open class RecordingImpl : BaseMinervaImpl() {
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun start() {
+        if (mRecordingState is Pause){//如果当前状态是暂停
+            checkSaveDirPath()
+            val tempPath =
+                if (mRecordingFormat == AudioFormats.MP3) {
+                    mSaveDirPath + RecordUtils.getRecordTempFileName(AudioFormats.MP3)
+                } else {
+                    mSaveDirPath + RecordUtils.getRecordTempFileName(AudioFormats.PCM)
+                }
+            val tempFile = File(tempPath)
+            startRecorder(tempFile, mSampleRate, mChannel, mEncoding, mRecordingFormat)
+            return
+        }
+
         if (mRecordingState !is Idle) {
             Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 重置为空闲")
             mRecordingState = Idle
@@ -47,6 +60,12 @@ open class RecordingImpl : BaseMinervaImpl() {
         Log.i(TAG, "采样率：$mSampleRate ; 声道 : $mChannel ; 位宽编码(2-16bit,3-8bit) : $mEncoding")
         Log.d(TAG, "录音文件路径：$resultPath")
         Log.d(TAG, "PCM临时文件路径：$tempPath")
+        if (mFiles.isNotEmpty()){
+            for (f in mFiles) {
+                f.delete()
+            }
+            mFiles = ArrayList()
+        }
         val resultFile = File(resultPath)
         mResultFile = resultFile
         val tempFile = File(tempPath)
@@ -140,23 +159,6 @@ open class RecordingImpl : BaseMinervaImpl() {
 
     override fun pause() {
         mRecordingState = Pause
-    }
-
-    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
-    override fun resume() {
-        if (mRecordingState !is Pause){
-            Log.e(TAG, "当前状态为 ${mRecordingState.javaClass.name} , 不为暂停")
-            return
-        }
-        checkSaveDirPath()
-        val tempPath =
-            if (mRecordingFormat == AudioFormats.MP3) {
-                mSaveDirPath + RecordUtils.getRecordTempFileName(AudioFormats.MP3)
-            } else {
-                mSaveDirPath + RecordUtils.getRecordTempFileName(AudioFormats.PCM)
-            }
-        val tempFile = File(tempPath)
-        startRecorder(tempFile, mSampleRate, mChannel, mEncoding, mRecordingFormat)
     }
 
     protected fun makeFile() {

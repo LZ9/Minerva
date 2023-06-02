@@ -212,11 +212,6 @@ open class VadImpl : BaseMinervaImpl(), MinervaVad {
         stop()
     }
 
-    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
-    override fun resume() {
-        start()
-    }
-
     override fun changeAudioFormat(format: AudioFormats): Boolean {
         if (format == AudioFormats.MP3) {
             notifyStates(Error(IllegalArgumentException(), "vad only support wav or pcm"))

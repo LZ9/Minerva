@@ -40,9 +40,6 @@ interface Minerva {
     /** 暂停 */
     fun pause()
 
-    /** 暂停后恢复 */
-    fun resume()
-
     /** 设置录音状态监听器[listener] */
     fun setOnRecordingStatesListener(listener: OnRecordingStatesListener?)
 

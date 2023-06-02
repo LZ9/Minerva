@@ -89,11 +89,7 @@ class SimpleActivity : BaseRefreshActivity() {
         }
 
         mBinding.startBtn.setOnClickListener {
-            if (mStatus == AudioStatus.PAUSE) {
-                mMinerva?.resume()
-            } else {
-                mMinerva?.start()
-            }
+            mMinerva?.start()
         }
 
         mBinding.stopBtn.setOnClickListener {
