@@ -2,7 +2,7 @@
 
 Minerva是一个便捷的音频工具，支持快速进行录音和VAD端点检测识别，并保存活动语音。内部采用协程进行异步操作，使用者只需订阅监听器回调实现自己的业务逻辑即可。
 
-1. 我参考了[zhaolewei](https://github.com/zhaolewei)的[ZlwAudioRecorder](https://github.com/zhaolewei/ZlwAudioRecorder)库，将其转为了kotlin版本并按照自己的理解进行了重构。 
+1. 我参考了[zhaolewei](https://github.com/zhaolewei)的[ZlwAudioRecorder](https://github.com/zhaolewei/ZlwAudioRecorder)库，将其转为了kotlin版本并进行了重构。 
 2. 同时参考[gkonovalov](https://github.com/gkonovalov)的[android-vad](https://github.com/gkonovalov/android-vad)的端点检测库，将其转为了kotlin版本并扩展支持保存活动语音。
 
 ## 目录
@@ -22,7 +22,7 @@ repositories {
 ```
 在你需要调用的module里的dependencies中加入以下依赖
 ```
-implementation 'ink.lodz:minerva:1.0.0'
+implementation 'ink.lodz:minerva:1.0.1'
 ```
 
 ## 2、使用教程
@@ -64,6 +64,8 @@ val minerva = MinervaAgent.recording() //选择录音模式
 
 <div align="center">
     <img src="https://github.com/LZ9/Minerva/blob/master/img/recording/recording_config.jpg?raw=true" height="600"/>
+</div>
+<div align="center">
     <img src="https://github.com/LZ9/Minerva/blob/master/img/recording/recording.jpg?raw=true" height="600"/>
     <img src="https://github.com/LZ9/Minerva/blob/master/img/recording/recording_finish.jpg?raw=true" height="600"/>
 </div>
@@ -139,7 +141,7 @@ val minerva = MinervaAgent.vad() //选择端点检测模式
 ## 扩展
 
 - [更新记录](https://github.com/LZ9/Minerva/blob/master/minerva/readme_update.md)
-- [回到顶部](https://github.com/LZ9/Conjurer#conjurer文字ocr识别)
+- [回到顶部](https://github.com/LZ9/Minerva#minerva音频工具类)
 
 ## License
 - [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
